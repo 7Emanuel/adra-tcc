@@ -1,6 +1,8 @@
 # ADRA - Agência de Desenvolvimento e Recursos Assistenciais
 
-Uma aplicação web institucional moderna para a ADRA, construída com React, Vite e Tailwind CSS. Inclui fluxo completo para usuários necessitados com autenticação, verificação e sistema de pedidos.
+🌐 **Live Demo**: https://github.com/danielzukowskipaixao/ADRA-sonnet
+
+Uma aplicação web institucional moderna para a ADRA, construída com React, Vite e Tailwind CSS. Plataforma completa de doações com autenticação, sistema de pedidos e mapa interativo.
 
 ## 🚀 Tecnologias
 
@@ -8,32 +10,46 @@ Uma aplicação web institucional moderna para a ADRA, construída com React, Vi
 - **Vite** - Build tool e servidor de desenvolvimento
 - **Tailwind CSS v3.4** - Framework CSS utilitário
 - **React Router DOM** - Roteamento para SPA
+- **React Leaflet** - Mapas interativos
+- **QRCode.react** - Geração de QR codes para PIX
+- **Lucide React** - Ícones modernos
 
 ## 🎨 Design System
 
-### Cores
-- **Verde Primário**: `#0A6159` (adra-green)
-- **Verde Claro**: `#2AB3A3` (adra-green-light)  
-- **Amarelo Destaque**: `#F5B700` (adra-yellow)
-- **Texto**: `#1F2937` (adra-text)
+### Cores ADRA
+- **Verde Primário**: `#10B981` (green-500)
+- **Verde Escuro**: `#065F46` (green-800)  
+- **Verde Claro**: `#D1FAE5` (green-100)
+- **Azul Accent**: `#3B82F6` (blue-500)
+- **Texto**: `#1F2937` (gray-800)
 
-### Componentes
+### Componentes Disponíveis
 - `Button` - Botões com variantes (primary, secondary, accent)
-- `Modal` - Modais acessíveis com backdrop
-- `Header` - Cabeçalho fixo com navegação e redirecionamento
-- `Footer` - Rodapé com informações institucionais
+- `Modal` - Modais acessíveis com backdrop e escape
+- `Header` - Cabeçalho fixo com navegação responsiva
+- `Footer` - Rodapé institucional
 - `FeatureCard` - Cards para áreas de atuação
-- `StepCard` - Cards para processo
+- `StepCard` - Cards para processos
+- `ErrorBoundary` - Captura de erros em componentes
 
-## 📱 Recursos
+## 📱 Funcionalidades Implementadas
 
 ### ✅ Homepage Completa
-- [x] Página inicial responsiva e acessível
+- [x] Design responsivo e acessível (WCAG AA)
 - [x] Navegação suave entre seções
-- [x] Design mobile-first
-- [x] Acessibilidade WCAG AA
-- [x] Modal para fluxos de doação
-- [x] Menu hamburger mobile
+- [x] Mobile-first approach
+- [x] Menu hamburger para dispositivos móveis
+- [x] Modais informativos
+- [x] Call-to-actions otimizados
+
+### ✅ Sistema de Doações (/doar)
+- [x] **Transferência/PIX**: Dados bancários reais com QR codes
+- [x] **Lista de Itens**: Sistema de carrinho de compras
+- [x] **Mapa Interativo**: Unidades ADRA com geolocalização
+- [x] Dados mock realistas (6 unidades São Paulo)
+- [x] Exportação de listas (PDF/TXT)
+- [x] Integração Google Maps e Waze
+- [x] Consentimento LGPD para geolocalização
 
 ### ✅ Fluxo do Usuário Necessitado
 - [x] Sistema de autenticação mock
@@ -46,10 +62,11 @@ Uma aplicação web institucional moderna para a ADRA, construída com React, Vi
 
 ### 🔄 Próximas Funcionalidades
 - [ ] Integração com backend real
-- [ ] Sistema de upload de imagens
+- [ ] Sistema de pagamento online
 - [ ] Notificações push/email
+- [ ] Dashboard administrativo
 - [ ] Chat entre usuários e doadores
-- [ ] Histórico de pedidos
+- [ ] Histórico de doações
 
 ## 🛠️ Desenvolvimento
 
@@ -57,16 +74,19 @@ Uma aplicação web institucional moderna para a ADRA, construída com React, Vi
 - Node.js 18+
 - npm ou yarn
 
-### Instalação
+### Instalação e Execução
 ```bash
 # Clone o repositório
-git clone [repo-url]
+git clone https://github.com/danielzukowskipaixao/ADRA-sonnet.git
+cd ADRA-sonnet
 
 # Instale as dependências
 npm install
 
 # Execute o servidor de desenvolvimento
 npm run dev
+
+# Acesse: http://localhost:5173
 ```
 
 ### Scripts Disponíveis
@@ -79,7 +99,13 @@ npm run preview      # Preview do build
 
 ## 🧪 Como Testar
 
-### Fluxo Completo do Usuário Necessitado:
+### Página de Doações (/doar):
+1. **Acesse**: `http://localhost:5173/doar`
+2. **Teste PIX**: Copie dados bancários e QR code
+3. **Lista de Itens**: Adicione itens ao carrinho, exporte lista
+4. **Mapa**: Permita geolocalização e veja unidades próximas
+
+### Fluxo do Usuário Necessitado:
 1. **Acesse**: `http://localhost:5173/`
 2. **Clique**: "Preciso de Ajuda" no cabeçalho
 3. **Aguarde**: Redirecionamento automático (2s)
@@ -93,37 +119,83 @@ Veja `GUIA_TESTE_FLUXO.md` para instruções detalhadas.
 
 ```
 src/
-├── components/          # Componentes reutilizáveis
+├── components/              # Componentes reutilizáveis
 │   ├── Button.jsx
 │   ├── Modal.jsx
 │   ├── Header.jsx
 │   ├── Footer.jsx
+│   ├── ErrorBoundary.jsx
 │   ├── FeatureCard.jsx
 │   ├── StepCard.jsx
-│   └── necessitado/     # Componentes do fluxo específico
-├── pages/              # Páginas da aplicação
+│   ├── doar/               # Componentes da página de doação
+│   │   ├── TransferSection.jsx
+│   │   ├── ItemsSection.jsx
+│   │   ├── MapSection.jsx
+│   │   ├── CopyableField.jsx
+│   │   ├── PixCard.jsx
+│   │   ├── ItemRow.jsx
+│   │   ├── ShoppingListPanel.jsx
+│   │   ├── UnitCard.jsx
+│   │   ├── LazyMap.jsx
+│   │   └── LazyMapComponent.jsx
+│   └── necessitado/        # Componentes do fluxo específico
+│       ├── AddressCapture.jsx
+│       ├── InfoBanner.jsx
+│       ├── RequestItemRow.jsx
+│       └── TermsCheckbox.jsx
+├── pages/                  # Páginas da aplicação
 │   ├── Home.jsx
+│   ├── Doar.jsx           # Página principal de doações
 │   ├── EmBreve.jsx
 │   ├── DecisorNecessitado.jsx
+│   ├── LoginCadastro.jsx
 │   ├── PaginaEsperaValidacao.jsx
 │   └── PaginaPedidoDoacao.jsx
-├── services/           # Serviços mock
+├── services/              # Serviços e APIs mock
 │   ├── AuthService.js
+│   ├── DonationsService.js
+│   ├── ItemsService.js
+│   ├── UnitsService.js
+│   ├── GeoService.js
 │   ├── VerificationService.js
 │   └── LocationService.js
-├── assets/             # Recursos estáticos
-├── App.jsx             # Componente principal com rotas
-├── main.jsx           # Entry point
-└── index.css          # Estilos globais
+├── data/                  # Dados mock JSON
+│   ├── donations.json     # PIX e dados bancários
+│   ├── requested_items.json # Itens para doação
+│   └── adra_units.json    # Unidades ADRA
+├── assets/                # Recursos estáticos
+├── App.jsx               # Componente principal com rotas
+├── main.jsx             # Entry point
+└── index.css            # Estilos globais com Tailwind
 ```
 
 ## 🎯 Rotas Disponíveis
 
 - `/` - Página inicial
+- `/doar` - **Página principal de doações** (PIX, itens, mapa)
 - `/preciso-de-ajuda` - Gateway de autenticação
+- `/login-cadastro` - Login e cadastro de usuários
 - `/espera-validacao` - Verificação de código
 - `/pedir-doacao` - Formulário de pedido
 - `/em-breve` - Páginas em desenvolvimento
+
+## 🗂️ Dados Mock
+
+### Transferências/PIX
+- Banco do Brasil (dados realistas)
+- Chave PIX: `doacoes@adra.org.br`
+- QR codes funcionais para teste
+
+### Itens para Doação (24 itens)
+- **6 categorias**: Alimentos, Limpeza, Higiene, Vestuário, Medicamentos, Material Escolar
+- **Níveis de urgência**: Alta, Média, Baixa
+- **Agregação automática**: Soma quantidades de famílias diferentes
+
+### Unidades ADRA (6 locais em São Paulo)
+- Endereços reais em São Paulo
+- Coordenadas GPS precisas
+- Horários de funcionamento
+- Contatos telefônicos e emails
 
 ## 💾 Persistência (localStorage)
 
@@ -161,5 +233,6 @@ Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes
 
 **ADRA** - Transformando vidas através da solidariedade 💚
 
-**Status**: ✅ Homepage + Fluxo Usuário Necessitado implementados
-**Última atualização**: Dezembro 2024
+**Status**: ✅ Homepage + Fluxo Completo de Doações + Sistema para Necessitados  
+**Última atualização**: Agosto 2025  
+**Repositório**: https://github.com/danielzukowskipaixao/ADRA-sonnet
