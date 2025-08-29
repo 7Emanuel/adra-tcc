@@ -64,10 +64,10 @@ const AddressCapture = ({
     <div className={`space-y-6 ${className}`}>
       {/* Header */}
       <div>
-        <h3 className="text-lg font-semibold text-adra-text mb-2">
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">
           Endereço para Entrega
         </h3>
-        <p className="text-sm text-adra-text-secondary">
+        <p className="text-sm text-gray-900-secondary">
           Informe seu endereço para que possamos organizar a entrega das doações.
         </p>
       </div>
@@ -184,7 +184,7 @@ const AddressCapture = ({
               maxLength="9"
               required
               className={`
-                w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-adra-green
+                w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600
                 ${errors.cep ? 'border-red-500' : 'border-gray-300'}
               `}
               aria-describedby={errors.cep ? "cep-error" : undefined}
@@ -210,7 +210,7 @@ const AddressCapture = ({
               placeholder="Rua, Avenida, Travessa..."
               required
               className={`
-                w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-adra-green
+                w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600
                 ${errors.logradouro ? 'border-red-500' : 'border-gray-300'}
               `}
               aria-describedby={errors.logradouro ? "street-error" : undefined}
@@ -236,7 +236,7 @@ const AddressCapture = ({
               placeholder="123, S/N"
               required
               className={`
-                w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-adra-green
+                w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600
                 ${errors.numero ? 'border-red-500' : 'border-gray-300'}
               `}
               aria-describedby={errors.numero ? "number-error" : undefined}
@@ -260,7 +260,7 @@ const AddressCapture = ({
               value={address.complemento || ''}
               onChange={(e) => handleInputChange('complemento', e.target.value)}
               placeholder="Apto, Bloco, Casa..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-adra-green"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
             />
           </div>
 
@@ -277,7 +277,7 @@ const AddressCapture = ({
               placeholder="Nome do bairro"
               required
               className={`
-                w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-adra-green
+                w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600
                 ${errors.bairro ? 'border-red-500' : 'border-gray-300'}
               `}
               aria-describedby={errors.bairro ? "neighborhood-error" : undefined}
@@ -303,7 +303,7 @@ const AddressCapture = ({
               placeholder="Nome da cidade"
               required
               className={`
-                w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-adra-green
+                w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600
                 ${errors.cidade ? 'border-red-500' : 'border-gray-300'}
               `}
               aria-describedby={errors.cidade ? "city-error" : undefined}
@@ -327,7 +327,7 @@ const AddressCapture = ({
               onChange={(e) => handleInputChange('uf', e.target.value)}
               required
               className={`
-                w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-adra-green
+                w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600
                 ${errors.uf ? 'border-red-500' : 'border-gray-300'}
               `}
               aria-describedby={errors.uf ? "uf-error" : undefined}

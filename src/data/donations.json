@@ -1,0 +1,13 @@
+{
+  "bank": {
+    "bankName": "Banco do Brasil",
+    "agency": "1234-5",
+    "account": "000123-4",
+    "owner": "ADRA - Agência de Desenvolvimento e Recursos Assistenciais",
+    "cnpj": "60.726.692/0001-81"
+  },
+  "pix": {
+    "key": "doacoes@adra.org.br",
+    "payload": "00020126490014BR.GOV.BCB.PIX0127doacoes@adra.org.br5204000053039865802BR5925ADRA AGENCIA DESENVOLVIMENTO6009SAO PAULO62070503***6304A1B2"
+  }
+}

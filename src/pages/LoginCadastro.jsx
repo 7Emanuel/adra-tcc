@@ -105,17 +105,17 @@ const LoginCadastro = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-adra-green to-adra-green-light flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-green-600 to-green-400 flex items-center justify-center px-4">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-adra-green rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-white font-bold text-2xl">A</span>
           </div>
-          <h1 className="text-2xl font-bold text-adra-text mb-2">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
             {isLogin ? 'Entrar na sua conta' : 'Criar nova conta'}
           </h1>
-          <p className="text-adra-text-secondary">
+          <p className="text-gray-600">
             {isLogin 
               ? 'Entre para solicitar ajuda da ADRA' 
               : 'Cadastre-se para solicitar ajuda da ADRA'
@@ -127,7 +127,7 @@ const LoginCadastro = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           {!isLogin && (
             <div>
-              <label htmlFor="nome" className="block text-sm font-medium text-adra-text mb-2">
+              <label htmlFor="nome" className="block text-sm font-medium text-gray-700 mb-2">
                 Nome completo *
               </label>
               <input
@@ -136,7 +136,7 @@ const LoginCadastro = () => {
                 name="nome"
                 value={formData.nome}
                 onChange={handleInputChange}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-adra-green focus:border-transparent transition-colors ${
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors ${
                   errors.nome ? 'border-red-500' : 'border-gray-300'
                 }`}
                 placeholder="Digite seu nome completo"
@@ -148,7 +148,7 @@ const LoginCadastro = () => {
           )}
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-adra-text mb-2">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
               Email *
             </label>
             <input
@@ -157,7 +157,7 @@ const LoginCadastro = () => {
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-adra-green focus:border-transparent transition-colors ${
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors ${
                 errors.email ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="Digite seu email"
@@ -169,7 +169,7 @@ const LoginCadastro = () => {
 
           {!isLogin && (
             <div>
-              <label htmlFor="telefone" className="block text-sm font-medium text-adra-text mb-2">
+              <label htmlFor="telefone" className="block text-sm font-medium text-gray-700 mb-2">
                 Telefone *
               </label>
               <input
@@ -178,7 +178,7 @@ const LoginCadastro = () => {
                 name="telefone"
                 value={formData.telefone}
                 onChange={handleInputChange}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-adra-green focus:border-transparent transition-colors ${
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors ${
                   errors.telefone ? 'border-red-500' : 'border-gray-300'
                 }`}
                 placeholder="(11) 99999-9999"
@@ -190,7 +190,7 @@ const LoginCadastro = () => {
           )}
 
           <div>
-            <label htmlFor="senha" className="block text-sm font-medium text-adra-text mb-2">
+            <label htmlFor="senha" className="block text-sm font-medium text-gray-700 mb-2">
               Senha *
             </label>
             <input
@@ -199,7 +199,7 @@ const LoginCadastro = () => {
               name="senha"
               value={formData.senha}
               onChange={handleInputChange}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-adra-green focus:border-transparent transition-colors ${
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors ${
                 errors.senha ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="Digite sua senha"
@@ -211,7 +211,7 @@ const LoginCadastro = () => {
 
           {!isLogin && (
             <div>
-              <label htmlFor="confirmarSenha" className="block text-sm font-medium text-adra-text mb-2">
+              <label htmlFor="confirmarSenha" className="block text-sm font-medium text-gray-700 mb-2">
                 Confirmar senha *
               </label>
               <input
@@ -220,7 +220,7 @@ const LoginCadastro = () => {
                 name="confirmarSenha"
                 value={formData.confirmarSenha}
                 onChange={handleInputChange}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-adra-green focus:border-transparent transition-colors ${
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors ${
                   errors.confirmarSenha ? 'border-red-500' : 'border-gray-300'
                 }`}
                 placeholder="Confirme sua senha"
@@ -259,7 +259,7 @@ const LoginCadastro = () => {
           <button
             type="button"
             onClick={toggleMode}
-            className="text-adra-green hover:text-adra-green-light transition-colors font-medium"
+            className="text-green-600 hover:text-green-500 transition-colors font-medium"
           >
             {isLogin 
               ? 'Não tem conta? Cadastre-se aqui' 
@@ -273,7 +273,7 @@ const LoginCadastro = () => {
           <button
             type="button"
             onClick={() => navigate('/')}
-            className="text-sm text-adra-text-secondary hover:text-adra-text transition-colors"
+            className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
           >
             ← Voltar para página inicial
           </button>
@@ -281,7 +281,7 @@ const LoginCadastro = () => {
 
         {/* Informações sobre segurança */}
         <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-          <p className="text-xs text-adra-text-secondary text-center">
+          <p className="text-xs text-gray-500 text-center">
             🔒 Seus dados estão seguros conosco. A ADRA garante total confidencialidade 
             das informações fornecidas.
           </p>

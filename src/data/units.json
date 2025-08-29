@@ -1,0 +1,86 @@
+[
+  {
+    "id": "adra-sp-01",
+    "nome": "ADRA – Unidade Centro",
+    "tipo": "ADRA",
+    "lat": -23.55052,
+    "lng": -46.63331,
+    "endereco": "R. Augusta, 1234 – Centro, São Paulo/SP",
+    "horario": "Seg–Sex 09h–17h",
+    "contatos": { 
+      "tel": "+5511999999999", 
+      "whatsapp": "+5511999999999",
+      "email": "centro@adra.org.br" 
+    }
+  },
+  {
+    "id": "adra-sp-02",
+    "nome": "ADRA – Unidade Vila Madalena",
+    "tipo": "ADRA",
+    "lat": -23.55105,
+    "lng": -46.68875,
+    "endereco": "R. Harmonia, 890 – Vila Madalena, São Paulo/SP",
+    "horario": "Seg–Sex 09h–17h, Sáb 09h–12h",
+    "contatos": { 
+      "tel": "+5511888888888", 
+      "whatsapp": "+5511888888888",
+      "email": "vilamadalena@adra.org.br" 
+    }
+  },
+  {
+    "id": "asa-sp-01",
+    "nome": "ASA – Unidade Norte",
+    "tipo": "ASA",
+    "lat": -23.50081,
+    "lng": -46.62270,
+    "endereco": "Av. Cruzeiro do Sul, 654 – Santana, São Paulo/SP",
+    "horario": "Seg–Sex 08h–16h",
+    "contatos": { 
+      "tel": "+5511777777777", 
+      "whatsapp": "+5511777777777",
+      "email": "norte@asa.org.br" 
+    }
+  },
+  {
+    "id": "asa-sp-02",
+    "nome": "ASA – Unidade Sul",
+    "tipo": "ASA",
+    "lat": -23.59555,
+    "lng": -46.68600,
+    "endereco": "R. Funchal, 987 – Vila Olímpia, São Paulo/SP",
+    "horario": "Seg–Sex 09h–17h",
+    "contatos": { 
+      "tel": "+5511666666666", 
+      "whatsapp": "+5511666666666",
+      "email": "sul@asa.org.br" 
+    }
+  },
+  {
+    "id": "adra-sp-03",
+    "nome": "ADRA – Unidade Mooca",
+    "tipo": "ADRA",
+    "lat": -23.54889,
+    "lng": -46.59982,
+    "endereco": "R. da Mooca, 321 – Mooca, São Paulo/SP",
+    "horario": "Seg–Sex 09h–17h",
+    "contatos": { 
+      "tel": "+5511555555555", 
+      "whatsapp": "+5511555555555",
+      "email": "mooca@adra.org.br" 
+    }
+  },
+  {
+    "id": "asa-sp-03",
+    "nome": "ASA – Unidade Leste",
+    "tipo": "ASA",
+    "lat": -23.54629,
+    "lng": -46.55544,
+    "endereco": "Av. Paulista, 567 – Bela Vista, São Paulo/SP",
+    "horario": "Seg–Sex 08h–16h",
+    "contatos": { 
+      "tel": "+5511444444444", 
+      "whatsapp": "+5511444444444",
+      "email": "leste@asa.org.br" 
+    }
+  }
+]

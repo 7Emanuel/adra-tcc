@@ -11,9 +11,9 @@ const Button = ({
   const baseClasses = 'font-semibold rounded-2xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed';
   
   const variants = {
-    primary: 'bg-adra-green hover:bg-adra-green-light text-white focus:ring-adra-green',
-    secondary: 'bg-white hover:bg-gray-50 text-adra-green border-2 border-adra-green focus:ring-adra-green',
-    accent: 'bg-adra-accent hover:bg-yellow-600 text-white focus:ring-adra-accent',
+    primary: 'bg-green-600 hover:bg-green-500 text-white focus:ring-green-600',
+    secondary: 'bg-white hover:bg-gray-50 text-green-600 border-2 border-green-600 focus:ring-green-600',
+    accent: 'bg-yellow-500 hover:bg-yellow-600 text-white focus:ring-yellow-500',
   };
   
   const sizes = {

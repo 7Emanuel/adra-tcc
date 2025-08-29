@@ -1,0 +1,33 @@
+{
+  "aceitaveis": [
+    "Alimentos não perecíveis (arroz, feijão, óleo, açúcar)",
+    "Produtos de higiene pessoal (sabonete, pasta de dente, shampoo)",
+    "Produtos de limpeza (detergente, desinfetante, sabão em pó)",
+    "Roupas em bom estado (limpas e sem rasgos)",
+    "Cobertores e edredons em bom estado",
+    "Fraldas descartáveis (todas as idades)",
+    "Material escolar (cadernos, lápis, canetas)",
+    "Brinquedos em bom estado (sem partes quebradas)",
+    "Livros didáticos e de literatura",
+    "Produtos para bebês (papinhas, leite em pó)"
+  ],
+  "nao_aceitos": [
+    "Alimentos vencidos ou próximos ao vencimento",
+    "Medicamentos de qualquer tipo",
+    "Roupas rasgadas, sujas ou em mal estado",
+    "Objetos cortantes ou perfurantes",
+    "Produtos químicos ou tóxicos",
+    "Eletrodomésticos quebrados",
+    "Móveis grandes ou pesados",
+    "Alimentos caseiros ou preparados",
+    "Bebidas alcoólicas",
+    "Produtos de origem animal crus"
+  ],
+  "dicas": [
+    "Verifique sempre a validade dos produtos",
+    "Lave as roupas antes de doar",
+    "Embale os itens de forma organizada",
+    "Para grandes volumes, entre em contato antes",
+    "Prefira produtos novos ou seminovos"
+  ]
+}

@@ -122,17 +122,17 @@ const PaginaEsperaValidacao = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-adra-bg flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-4 border-adra-green border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-adra-text-secondary">Carregando...</p>
+          <div className="w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Carregando...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-adra-bg">
+    <div className="min-h-screen bg-gray-50">
       {/* Header espaçamento */}
       <div className="pt-20 pb-16 px-4">
         <div className="container mx-auto max-w-2xl">
@@ -145,11 +145,11 @@ const PaginaEsperaValidacao = () => {
               </svg>
             </div>
             
-            <h1 className="text-3xl lg:text-4xl font-bold text-adra-text mb-4">
+            <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
               Estamos validando sua conta
             </h1>
             
-            <p className="text-lg text-adra-text-secondary leading-relaxed">
+            <p className="text-lg text-gray-600 leading-relaxed">
               Olá, <strong>{user.fullName}</strong>! Para sua segurança e para evitar fraudes, 
               enviamos um código de verificação para seu e-mail.
             </p>
@@ -157,17 +157,17 @@ const PaginaEsperaValidacao = () => {
 
           {/* User Info */}
           <div className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-adra-text mb-4">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Informações da Conta
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-adra-text-secondary">E-mail:</span>
-                <p className="font-medium text-adra-text">{user.email}</p>
+                <span className="text-gray-600">E-mail:</span>
+                <p className="font-medium text-gray-900">{user.email}</p>
               </div>
               <div>
-                <span className="text-adra-text-secondary">Telefone:</span>
-                <p className="font-medium text-adra-text">{user.phone}</p>
+                <span className="text-gray-600">Telefone:</span>
+                <p className="font-medium text-gray-900">{user.phone}</p>
               </div>
             </div>
           </div>
@@ -186,11 +186,11 @@ const PaginaEsperaValidacao = () => {
 
           {/* Verification Form */}
           <div className="bg-white rounded-2xl p-8 shadow-sm">
-            <h2 className="text-xl font-semibold text-adra-text mb-4 text-center">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4 text-center">
               Código de Verificação
             </h2>
             
-            <p className="text-center text-adra-text-secondary mb-6">
+            <p className="text-center text-gray-600 mb-6">
               Insira o código de 6 dígitos enviado para seu e-mail:
             </p>
 
@@ -208,7 +208,7 @@ const PaginaEsperaValidacao = () => {
                   maxLength="6"
                   className={`
                     text-center text-2xl font-mono tracking-widest w-48 px-4 py-3 
-                    border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-adra-green
+                    border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500
                     ${error ? 'border-red-500' : 'border-gray-300'}
                     ${success ? 'border-green-500 bg-green-50' : ''}
                   `}
@@ -273,7 +273,7 @@ const PaginaEsperaValidacao = () => {
                 <button
                   onClick={handleResendCode}
                   disabled={isResending || success || !VerificationService.canResendCode()}
-                  className="text-sm text-adra-green hover:text-adra-green-light underline disabled:text-gray-400 disabled:no-underline focus:outline-none focus:ring-2 focus:ring-adra-green rounded"
+                  className="text-sm text-green-600 hover:text-green-500 underline disabled:text-gray-400 disabled:no-underline focus:outline-none focus:ring-2 focus:ring-green-500 rounded"
                 >
                   {isResending ? 'Reenviando...' : 'Reenviar código'}
                 </button>
@@ -294,7 +294,7 @@ const PaginaEsperaValidacao = () => {
               </div>
             </InfoBanner>
 
-            <div className="text-sm text-adra-text-secondary">
+            <div className="text-sm text-gray-600">
               <p className="mb-2">Precisa de ajuda?</p>
               <div className="space-y-1">
                 <p>📞 WhatsApp: (11) 9999-9999</p>

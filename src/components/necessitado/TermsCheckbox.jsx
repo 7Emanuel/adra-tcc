@@ -26,7 +26,7 @@ const TermsCheckbox = ({
             onChange={(e) => onChange(e.target.checked)}
             required={required}
             className={`
-              w-5 h-5 rounded border-2 text-adra-green focus:ring-2 focus:ring-adra-green focus:ring-opacity-50
+              w-5 h-5 rounded border-2 text-green-600 focus:ring-2 focus:ring-green-600 focus:ring-opacity-50
               ${error ? 'border-red-500' : 'border-gray-300'}
               transition-colors duration-200
             `}

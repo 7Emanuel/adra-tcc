@@ -247,10 +247,10 @@ const PaginaPedidoDoacao = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-adra-bg flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-4 border-adra-green border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-adra-text-secondary">Carregando...</p>
+          <div className="w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Carregando...</p>
         </div>
       </div>
     );
@@ -258,7 +258,7 @@ const PaginaPedidoDoacao = () => {
 
   if (submitSuccess) {
     return (
-      <div className="min-h-screen bg-adra-bg flex items-center justify-center px-4">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <div className="max-w-2xl mx-auto text-center">
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <svg className="w-10 h-10 text-green-600" fill="currentColor" viewBox="0 0 20 20">
@@ -266,30 +266,30 @@ const PaginaPedidoDoacao = () => {
             </svg>
           </div>
           
-          <h1 className="text-3xl font-bold text-adra-text mb-4">
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">
             Pedido Enviado com Sucesso!
           </h1>
           
-          <p className="text-lg text-adra-text-secondary mb-8 leading-relaxed">
+          <p className="text-lg text-gray-600 mb-8 leading-relaxed">
             Obrigado, <strong>{user.fullName}</strong>! Recebemos seu pedido e nossa equipe 
             entrará em contato em breve para confirmar os detalhes e coordenar a entrega.
           </p>
           
           <div className="bg-white rounded-2xl p-6 mb-8 text-left">
-            <h2 className="text-lg font-semibold text-adra-text mb-4">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Próximos Passos:
             </h2>
-            <ul className="space-y-3 text-sm text-adra-text-secondary">
+            <ul className="space-y-3 text-sm text-gray-600">
               <li className="flex items-start space-x-3">
-                <span className="text-adra-green font-bold">1.</span>
+                <span className="text-green-600 font-bold">1.</span>
                 <span>Nossa equipe analisará seu pedido (até 24h)</span>
               </li>
               <li className="flex items-start space-x-3">
-                <span className="text-adra-green font-bold">2.</span>
+                <span className="text-green-600 font-bold">2.</span>
                 <span>Entraremos em contato via telefone/WhatsApp</span>
               </li>
               <li className="flex items-start space-x-3">
-                <span className="text-adra-green font-bold">3.</span>
+                <span className="text-green-600 font-bold">3.</span>
                 <span>Agendaremos a visita/entrega conforme disponibilidade</span>
               </li>
             </ul>
@@ -308,17 +308,17 @@ const PaginaPedidoDoacao = () => {
   }
 
   return (
-    <div className="min-h-screen bg-adra-bg">
+    <div className="min-h-screen bg-gray-50">
       {/* Header espaçamento */}
       <div className="pt-20 pb-16 px-4">
         <div className="container mx-auto max-w-4xl">
           
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl lg:text-4xl font-bold text-adra-text mb-4">
+            <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
               Faça seu pedido de doações
             </h1>
-            <p className="text-lg text-adra-text-secondary">
+            <p className="text-lg text-gray-600">
               Olá, <strong>{user?.fullName}</strong>! Preencha os dados abaixo para solicitar as doações que você precisa.
             </p>
           </div>
@@ -339,7 +339,7 @@ const PaginaPedidoDoacao = () => {
             {/* Seção de Identificação */}
             <section className="bg-white rounded-2xl p-6 shadow-sm">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-adra-text">
+                <h2 className="text-xl font-semibold text-gray-900">
                   Identificação
                 </h2>
                 <Button
@@ -354,19 +354,19 @@ const PaginaPedidoDoacao = () => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="text-adra-text-secondary">Nome completo:</span>
-                  <p className="font-medium text-adra-text">{user.fullName}</p>
+                  <span className="text-gray-600">Nome completo:</span>
+                  <p className="font-medium text-gray-900">{user.fullName}</p>
                 </div>
                 <div>
-                  <span className="text-adra-text-secondary">E-mail:</span>
-                  <p className="font-medium text-adra-text">{user.email}</p>
+                  <span className="text-gray-600">E-mail:</span>
+                  <p className="font-medium text-gray-900">{user.email}</p>
                 </div>
                 <div>
-                  <span className="text-adra-text-secondary">Telefone:</span>
-                  <p className="font-medium text-adra-text">{user.phone}</p>
+                  <span className="text-gray-600">Telefone:</span>
+                  <p className="font-medium text-gray-900">{user.phone}</p>
                 </div>
                 <div>
-                  <span className="text-adra-text-secondary">Status:</span>
+                  <span className="text-gray-600">Status:</span>
                   <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                     ✓ Conta Verificada
                   </span>
@@ -388,10 +388,10 @@ const PaginaPedidoDoacao = () => {
             {/* Seção de Pedido */}
             <section className="bg-white rounded-2xl p-6 shadow-sm">
               <div className="mb-6">
-                <h2 className="text-xl font-semibold text-adra-text mb-2">
+                <h2 className="text-xl font-semibold text-gray-900 mb-2">
                   Itens Solicitados
                 </h2>
-                <p className="text-sm text-adra-text-secondary">
+                <p className="text-sm text-gray-600">
                   Liste os itens que você precisa. Seja específico quanto possível.
                 </p>
               </div>
@@ -409,7 +409,7 @@ const PaginaPedidoDoacao = () => {
                 ))}
                 
                 {items.length === 0 && (
-                  <div className="text-center py-8 text-adra-text-secondary">
+                  <div className="text-center py-8 text-gray-600">
                     <svg className="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m0 0V9a1 1 0 011-1h1m-1 1v4h-2" />
                     </svg>
@@ -449,7 +449,7 @@ const PaginaPedidoDoacao = () => {
                     id="urgency"
                     value={urgency}
                     onChange={(e) => setUrgency(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-adra-green"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
                   >
                     <option value="">Selecione a urgência</option>
                     <option value="baixa">Baixa - posso aguardar</option>
@@ -469,7 +469,7 @@ const PaginaPedidoDoacao = () => {
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Explique brevemente sua situação e por que precisa destes itens..."
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-adra-green resize-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 resize-none"
                   />
                 </div>
               </div>

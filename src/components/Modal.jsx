@@ -54,14 +54,14 @@ const Modal = ({ isOpen, onClose, title, children, primaryAction, secondaryActio
         <h2 
           ref={titleRef}
           id="modal-title"
-          className="text-2xl font-bold text-adra-text mb-4 focus:outline-none"
+          className="text-2xl font-bold text-gray-900 mb-4 focus:outline-none"
           tabIndex={-1}
         >
           {title}
         </h2>
         
         {/* Content */}
-        <div className="mb-6 text-adra-text-secondary">
+        <div className="mb-6 text-gray-600">
           {children}
         </div>
         

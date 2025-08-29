@@ -40,7 +40,7 @@ const DecisorNecessitado = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-adra-green to-adra-green-light flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-green-600 to-green-500 flex items-center justify-center">
         <div className="text-center text-white">
           <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
             <div className="w-8 h-8 border-3 border-white border-t-transparent rounded-full animate-spin"></div>

@@ -1,0 +1,124 @@
+{
+  "adraUnits": [
+    {
+      "id": 1,
+      "nome": "ADRA São Paulo - Central",
+      "tipo": "ADRA",
+      "lat": -23.55052,
+      "lng": -46.63331,
+      "endereco": {
+        "rua": "Av. Paulista, 2073",
+        "bairro": "Bela Vista",
+        "cidade": "São Paulo",
+        "cep": "01311-300",
+        "estado": "SP"
+      },
+      "horario": "Segunda a Sexta: 8h às 17h",
+      "contatos": {
+        "tel": "(11) 3146-3780",
+        "whatsapp": "(11) 99999-1234",
+        "email": "central@adra.org.br"
+      }
+    },
+    {
+      "id": 2,
+      "nome": "ASA Santo André",
+      "tipo": "ASA",
+      "lat": -23.65420,
+      "lng": -46.53875,
+      "endereco": {
+        "rua": "Rua das Monções, 298",
+        "bairro": "Centro",
+        "cidade": "Santo André",
+        "cep": "09015-080",
+        "estado": "SP"
+      },
+      "horario": "Segunda a Sexta: 8h às 17h",
+      "contatos": {
+        "tel": "(11) 4436-8200",
+        "whatsapp": "(11) 99999-2345",
+        "email": "santoandre@asa.org.br"
+      }
+    },
+    {
+      "id": 3,
+      "nome": "ADRA Zona Norte",
+      "tipo": "ADRA",
+      "lat": -23.48123,
+      "lng": -46.62456,
+      "endereco": {
+        "rua": "Av. Nova Cantareira, 1500",
+        "bairro": "Tucuruvi",
+        "cidade": "São Paulo",
+        "cep": "02330-002",
+        "estado": "SP"
+      },
+      "horario": "Segunda a Sexta: 8h às 17h",
+      "contatos": {
+        "tel": "(11) 2201-9876",
+        "whatsapp": "(11) 99999-3456",
+        "email": "zonanorte@adra.org.br"
+      }
+    },
+    {
+      "id": 4,
+      "nome": "ASA São Bernardo",
+      "tipo": "ASA",
+      "lat": -23.69389,
+      "lng": -46.54544,
+      "endereco": {
+        "rua": "Rua Marechal Deodoro, 1256",
+        "bairro": "Centro",
+        "cidade": "São Bernardo do Campo",
+        "cep": "09715-001",
+        "estado": "SP"
+      },
+      "horario": "Segunda a Sexta: 8h às 17h",
+      "contatos": {
+        "tel": "(11) 4125-7890",
+        "whatsapp": "(11) 99999-4567",
+        "email": "saobernardo@asa.org.br"
+      }
+    },
+    {
+      "id": 5,
+      "nome": "ADRA Zona Sul",
+      "tipo": "ADRA",
+      "lat": -23.59555,
+      "lng": -46.68875,
+      "endereco": {
+        "rua": "Av. Giovanni Gronchi, 2200",
+        "bairro": "Vila Andrade",
+        "cidade": "São Paulo",
+        "cep": "05724-002",
+        "estado": "SP"
+      },
+      "horario": "Segunda a Sexta: 8h às 17h",
+      "contatos": {
+        "tel": "(11) 5181-2345",
+        "whatsapp": "(11) 99999-5678",
+        "email": "zonasul@adra.org.br"
+      }
+    },
+    {
+      "id": 6,
+      "nome": "ASA Osasco",
+      "tipo": "ASA",
+      "lat": -23.53251,
+      "lng": -46.79175,
+      "endereco": {
+        "rua": "Av. dos Autonomistas, 1400",
+        "bairro": "Centro",
+        "cidade": "Osasco",
+        "cep": "06020-010",
+        "estado": "SP"
+      },
+      "horario": "Segunda a Sexta: 8h às 17h",
+      "contatos": {
+        "tel": "(11) 3681-4567",
+        "whatsapp": "(11) 99999-6789",
+        "email": "osasco@asa.org.br"
+      }
+    }
+  ]
+}

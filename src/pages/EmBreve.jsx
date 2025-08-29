@@ -38,37 +38,37 @@ const EmBreve = ({ type = 'geral' }) => {
   const content = getContent();
 
   return (
-    <div className="min-h-screen bg-adra-bg flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <div className="max-w-2xl mx-auto text-center">
         {/* Icon */}
         <div className="mb-8">
-          <div className="w-20 h-20 bg-adra-green bg-opacity-10 rounded-full flex items-center justify-center mx-auto">
-            <svg className="w-10 h-10 text-adra-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+            <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
         </div>
 
         {/* Title */}
-        <h1 className="text-4xl font-bold text-adra-text mb-6">
+        <h1 className="text-4xl font-bold text-gray-900 mb-6">
           {content.title}
         </h1>
 
         {/* Description */}
-        <p className="text-lg text-adra-text-secondary mb-8 leading-relaxed">
+        <p className="text-lg text-gray-600 mb-8 leading-relaxed">
           {content.description}
         </p>
 
         {/* Features */}
         {content.features.length > 0 && (
           <div className="bg-white rounded-2xl p-6 shadow-lg mb-8">
-            <h2 className="text-xl font-semibold text-adra-text mb-4">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">
               Funcionalidades que estão chegando:
             </h2>
             <ul className="space-y-2 text-left">
               {content.features.map((feature, index) => (
-                <li key={index} className="flex items-center text-adra-text-secondary">
-                  <svg className="w-5 h-5 text-adra-green mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <li key={index} className="flex items-center text-gray-600">
+                  <svg className="w-5 h-5 text-green-600 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                   {feature}

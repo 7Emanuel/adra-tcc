@@ -63,7 +63,7 @@ const RequestItemRow = ({
             placeholder="Ex: Arroz, Feijão, Camiseta..."
             required
             className={`
-              w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-adra-green
+              w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600
               ${error?.name ? 'border-red-500' : 'border-gray-300'}
             `}
             aria-describedby={error?.name ? `item-name-error-${item.id}` : undefined}
@@ -94,7 +94,7 @@ const RequestItemRow = ({
             onChange={(e) => handleChange('category', e.target.value)}
             required
             className={`
-              w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-adra-green
+              w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600
               ${error?.category ? 'border-red-500' : 'border-gray-300'}
             `}
             aria-describedby={error?.category ? `item-category-error-${item.id}` : undefined}
@@ -135,7 +135,7 @@ const RequestItemRow = ({
             placeholder="1"
             required
             className={`
-              w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-adra-green
+              w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600
               ${error?.quantity ? 'border-red-500' : 'border-gray-300'}
             `}
             aria-describedby={error?.quantity ? `item-quantity-error-${item.id}` : undefined}
@@ -166,7 +166,7 @@ const RequestItemRow = ({
             value={item.unit || ''}
             onChange={(e) => handleChange('unit', e.target.value)}
             placeholder="kg, unidades, pacotes..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-adra-green"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
           />
         </div>
       </div>
@@ -185,7 +185,7 @@ const RequestItemRow = ({
           onChange={(e) => handleChange('notes', e.target.value)}
           placeholder="Especificações, tamanho, marca preferida, etc."
           rows={2}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-adra-green resize-none"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 resize-none"
         />
       </div>
     </div>
