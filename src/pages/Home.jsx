@@ -11,7 +11,8 @@ const Home = () => {
   const navigate = useNavigate();
   const [isDoarModalOpen, setIsDoarModalOpen] = useState(false);
 
-  const handleDoarClick = () => setIsDoarModalOpen(true);
+  // Navegar para o hub de doações em vez de abrir modal
+  const handleDoarClick = () => navigate('/doar');
   const handleAjudaClick = () => navigate('/preciso-de-ajuda');
 
   return (
