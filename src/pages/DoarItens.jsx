@@ -1,10 +1,41 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import Header from '../components/Header';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import Button from '../components/Button';
+import units from '../data/units.json';
+import SchedulePickupModal from '../components/doar/SchedulePickupModal';
+ 
 
 export default function DoarItens() {
+  const navigate = useNavigate();
+  const [showSchedule, setShowSchedule] = useState(false);
+
+  const calcularDistancia = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  };
+
+  const buildWhatsAppLink = (rawNumber, message) => {
+    // Remove caracteres não numéricos
+    let digits = (rawNumber || '').replace(/\D/g, '');
+    // Garante prefixo do país (55). Se já começar com 55, mantém.
+    if (!digits.startsWith('55')) {
+      digits = `55${digits}`;
+    }
+    const text = encodeURIComponent(message);
+    return `https://wa.me/${digits}?text=${text}`;
+  };
+
+  const handleAgendarColeta = () => {
+    setShowSchedule(true);
+  };
+
   const itensAceitos = [
     {
       categoria: "Roupas e Calçados",
@@ -73,7 +104,6 @@ export default function DoarItens() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
       
       <main className="container mx-auto px-4 py-16">
         <div className="max-w-6xl mx-auto">
@@ -190,17 +220,17 @@ export default function DoarItens() {
                 </Button>
               </Link>
               
-              <a 
-                href="tel:+5511123456789" 
-                className="inline-flex"
+              <Button 
+                variant="secondary" 
+                size="lg" 
+                className="w-full sm:w-auto"
+                onClick={handleAgendarColeta}
               >
-                <Button variant="secondary" size="lg" className="w-full sm:w-auto">
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                   </svg>
                   Agendar Coleta
-                </Button>
-              </a>
+              </Button>
             </div>
           </div>
 
@@ -213,6 +243,9 @@ export default function DoarItens() {
             </Link>
           </div>
         </div>
+
+        {/* Modal de Agendamento */}
+        <SchedulePickupModal isOpen={showSchedule} onClose={() => setShowSchedule(false)} />
       </main>
 
       <Footer />

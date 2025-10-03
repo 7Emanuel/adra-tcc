@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Button from '../components/Button';
+ 
 
 export default function ComoFunciona() {
   const passosDoacaoTransferencia = [
@@ -61,7 +61,6 @@ export default function ComoFunciona() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
       
       <main className="container mx-auto px-4 py-16">
         <div className="max-w-6xl mx-auto">

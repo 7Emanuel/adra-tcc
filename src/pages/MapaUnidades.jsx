@@ -1,16 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Button from '../components/Button';
+ 
 
 export default function MapaUnidades() {
   const [userLocation, setUserLocation] = useState(null);
   const [selectedUnit, setSelectedUnit] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [mapError, setMapError] = useState(null);
-  const mapRef = useRef(null);
-  const mapInstanceRef = useRef(null);
+  const [nearestUnitId, setNearestUnitId] = useState(null);
+  const [sortMode, setSortMode] = useState('name'); // inicia por nome, muda para distância quando geo exata
+  const [isGeoExact, setIsGeoExact] = useState(false);
+  const [geoSource, setGeoSource] = useState('none'); // 'none' | 'gps' | 'manual'
+  const [askLocation, setAskLocation] = useState(true);
+  const [manualOrigin, setManualOrigin] = useState('');
 
   // Dados das unidades ADRA (dados estáticos para demonstração)
   const unidades = [
@@ -57,103 +60,92 @@ export default function MapaUnidades() {
   ];
 
   useEffect(() => {
-    // Solicitar geolocalização do usuário
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const location = [position.coords.latitude, position.coords.longitude];
-          setUserLocation(location);
-          setLoading(false);
-          initializeMap(location);
-        },
-        (error) => {
-          console.warn('Geolocalização negada ou indisponível:', error);
-          // Usar localização padrão (São Paulo centro)
-          const defaultLocation = [-23.5505, -46.6333];
-          setUserLocation(defaultLocation);
-          setLoading(false);
-          initializeMap(defaultLocation);
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 300000
+    // Restaurar origem salva
+    try {
+      const saved = localStorage.getItem('adra_origin');
+      if (saved) {
+        const obj = JSON.parse(saved);
+        if (obj && Array.isArray(obj.coords)) {
+          setUserLocation(obj.coords);
+          setIsGeoExact(obj.type === 'gps');
+          setGeoSource(obj.type || 'none');
+          setManualOrigin(obj.text || '');
+          setAskLocation(false);
+          setSortMode('distance');
         }
-      );
-    } else {
-      // Fallback se geolocalização não estiver disponível
-      const defaultLocation = [-23.5505, -46.6333];
-      setUserLocation(defaultLocation);
-      setLoading(false);
-      initializeMap(defaultLocation);
-    }
+      }
+    } catch {}
+    // Não solicitar automaticamente; aguardamos ação do usuário se não houver origem salva
+    setLoading(false);
   }, []);
 
-  const initializeMap = (centerLocation) => {
-    // Verificar se o Leaflet está disponível
-    if (typeof window !== 'undefined' && window.L) {
-      try {
-        if (mapInstanceRef.current) {
-          mapInstanceRef.current.remove();
-        }
-
-        const map = window.L.map(mapRef.current).setView(centerLocation, 12);
-
-        // Adicionar tile layer do OpenStreetMap
-        window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
-
-        // Adicionar marcador da localização do usuário
-        if (userLocation) {
-          const userIcon = window.L.divIcon({
-            html: '<div style="background-color: #3B82F6; width: 12px; height: 12px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(59,130,246,0.5);"></div>',
-            iconSize: [18, 18],
-            className: 'custom-div-icon'
-          });
-
-          window.L.marker(centerLocation, { icon: userIcon })
-            .addTo(map)
-            .bindPopup('Sua localização atual')
-            .openPopup();
-        }
-
-        // Adicionar marcadores das unidades
-        unidades.forEach(unidade => {
-          const unitIcon = window.L.divIcon({
-            html: `<div style="background-color: #059669; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid white; box-shadow: 0 2px 10px rgba(5,150,105,0.4);">${unidade.id}</div>`,
-            iconSize: [30, 30],
-            className: 'custom-div-icon'
-          });
-
-          window.L.marker(unidade.coordenadas, { icon: unitIcon })
-            .addTo(map)
-            .bindPopup(`
-              <div style="min-width: 200px;">
-                <h3 style="margin: 0 0 8px 0; font-weight: bold;">${unidade.nome}</h3>
-                <p style="margin: 0 0 4px 0; font-size: 12px;">${unidade.endereco}</p>
-                <p style="margin: 0 0 8px 0; font-size: 12px; color: #666;">${unidade.horario}</p>
-                <button onclick="window.selectUnit(${unidade.id})" style="background-color: #059669; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer;">Ver detalhes</button>
-              </div>
-            `);
-        });
-
-        mapInstanceRef.current = map;
-
-        // Função global para selecionar unidade (chamada do popup)
-        window.selectUnit = (unitId) => {
-          const unit = unidades.find(u => u.id === unitId);
-          setSelectedUnit(unit);
-        };
-
-      } catch (error) {
-        console.error('Erro ao inicializar mapa:', error);
-        setMapError('Erro ao carregar o mapa. Tente recarregar a página.');
+  const solicitarMinhaLocalizacao = () => {
+    if (!navigator.geolocation) {
+      alert('Seu navegador não suporta geolocalização. Informe um endereço manualmente.');
+      return;
+    }
+    setLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const location = [position.coords.latitude, position.coords.longitude];
+        setUserLocation(location);
+        setIsGeoExact(true);
+        setLoading(false);
+        setAskLocation(false);
+        setSortMode('distance');
+        setGeoSource('gps');
+        try { localStorage.setItem('adra_origin', JSON.stringify({ type: 'gps', coords: location })); } catch {}
+      },
+      (error) => {
+        console.warn('Geolocalização negada ou indisponível:', error);
+        setLoading(false);
+        setAskLocation(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000,
       }
-    } else {
-      setMapError('Bibliotecas do mapa não carregadas. Tente recarregar a página.');
+    );
+  };
+
+  const geocodeAddress = async (query) => {
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`;
+    const res = await fetch(url, {
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    if (!res.ok) throw new Error('Falha ao geocodificar');
+    const data = await res.json();
+    if (!Array.isArray(data) || data.length === 0) throw new Error('Endereço não encontrado');
+    const { lat, lon } = data[0];
+    return [parseFloat(lat), parseFloat(lon)];
+  };
+
+  const usarEnderecoManual = async () => {
+    if (!manualOrigin || !manualOrigin.trim()) {
+      alert('Digite um endereço válido.');
+      return;
+    }
+    try {
+      setLoading(true);
+      const coords = await geocodeAddress(manualOrigin.trim());
+      setUserLocation(coords);
+      setIsGeoExact(false);
+      setAskLocation(false);
+      setSortMode('distance');
+      setGeoSource('manual');
+      try { localStorage.setItem('adra_origin', JSON.stringify({ type: 'manual', coords, text: manualOrigin.trim() })); } catch {}
+    } catch (e) {
+      console.warn(e);
+      alert('Não foi possível localizar este endereço. Tente ser mais específico.');
+    } finally {
+      setLoading(false);
     }
   };
+
+  // Removido: inicialização de mapa (Leaflet)
 
   const calcularDistancia = (lat1, lon1, lat2, lon2) => {
     const R = 6371; // Raio da Terra em km
@@ -175,51 +167,182 @@ export default function MapaUnidades() {
     return `${distancia.toFixed(1)} km`;
   };
 
+  // Tempo estimado simples (aprox.) assumindo 35 km/h em vias urbanas
+  const getTempoEstimado = (unidade) => {
+    if (!userLocation) return '';
+    const distancia = calcularDistancia(
+      userLocation[0], userLocation[1],
+      unidade.coordenadas[0], unidade.coordenadas[1]
+    );
+    const minutos = Math.max(3, Math.round((distancia / 35) * 60));
+    return `~${minutos} min`;
+  };
+
+  // Definir unidade mais próxima quando tivermos userLocation
+  useEffect(() => {
+    if (!userLocation) return;
+    let nearest = { id: null, dist: Infinity };
+    unidades.forEach((u) => {
+      const d = calcularDistancia(userLocation[0], userLocation[1], u.coordenadas[0], u.coordenadas[1]);
+      if (d < nearest.dist) {
+        nearest = { id: u.id, dist: d };
+      }
+    });
+    setNearestUnitId(nearest.id);
+  }, [userLocation]);
+
+  // Lista ordenada conforme sortMode
+  const unidadesOrdenadas = (() => {
+    const arr = [...unidades];
+    if (sortMode === 'name') {
+      return arr.sort((a, b) => a.nome.localeCompare(b.nome));
+    }
+    // por distância
+    return arr.sort((a, b) => {
+      if (!userLocation) return 0;
+      const da = calcularDistancia(userLocation[0], userLocation[1], a.coordenadas[0], a.coordenadas[1]);
+      const db = calcularDistancia(userLocation[0], userLocation[1], b.coordenadas[0], b.coordenadas[1]);
+      return da - db;
+    });
+  })();
+
   const abrirRotaGoogle = (unidade) => {
-    const endereco = encodeURIComponent(unidade.endereco);
-    const url = `https://www.google.com/maps/dir/?api=1&destination=${endereco}`;
-    window.open(url, '_blank');
+    const destLat = unidade.coordenadas[0];
+    const destLng = unidade.coordenadas[1];
+    let originParam = '';
+    if (manualOrigin && manualOrigin.trim()) {
+      originParam = `&origin=${encodeURIComponent(manualOrigin.trim())}`;
+    } else if (Array.isArray(userLocation) && userLocation.length === 2) {
+      originParam = `&origin=${userLocation[0]},${userLocation[1]}`;
+    }
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${destLat},${destLng}${originParam}&travelmode=driving`;
+    const win = window.open(url, '_blank', 'noopener');
+    if (win) {
+      win.opener = null;
+    }
+  };
+
+  const copiarEndereco = async (texto) => {
+    try {
+      await navigator.clipboard.writeText(texto);
+      alert('Endereço copiado!');
+    } catch (e) {
+      console.warn('Falha ao copiar', e);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
-      
-      {/* Link do CSS do Leaflet */}
-      <link 
-        rel="stylesheet" 
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-        crossOrigin=""
-      />
-      
-      {/* Script do Leaflet */}
-      <script 
-        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-        crossOrigin=""
-      ></script>
 
       <main className="container mx-auto px-4 py-16">
-        <div className="max-w-7xl mx-auto">
-          {/* Header da Página */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Unidades ADRA Próximas
-            </h1>
-            <p className="text-xl text-gray-600">
-              Encontre a unidade mais próxima para entregar sua doação
-            </p>
+          {/* Status da origem atual e ação para alterar */}
+          {!askLocation && (userLocation || manualOrigin) && (
+            <div className="mb-4 flex items-center justify-between bg-gray-50 border border-gray-200 rounded-lg p-3">
+              <p className="text-sm text-gray-700">
+                Origem: {geoSource === 'gps' ? 'Minha localização (GPS)' : manualOrigin ? `"${manualOrigin}"` : 'Indefinida'}
+              </p>
+              <button
+                className="text-sm text-green-700 hover:text-green-800 underline"
+                onClick={() => setAskLocation(true)}
+              >
+                Alterar origem
+              </button>
+            </div>
+          )}
+          {/* Banner para solicitar a origem */}
+          {askLocation && (
+            <div className="mb-6 bg-white border border-gray-200 rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+              <div>
+                <h3 className="font-semibold text-gray-900">De onde você está saindo?</h3>
+                <p className="text-sm text-gray-600">Use sua localização atual ou informe um endereço para traçarmos a melhor rota e sugerirmos a unidade mais próxima.</p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                <button
+                  onClick={solicitarMinhaLocalizacao}
+                  className="inline-flex items-center justify-center bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  Usar minha localização
+                </button>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={manualOrigin}
+                    onChange={(e) => setManualOrigin(e.target.value)}
+                    placeholder="Digite seu endereço (ex: Av. Paulista, 100 - SP)"
+                    className="border border-gray-300 rounded-lg px-3 py-2 w-72"
+                  />
+                  <button
+                    onClick={usarEnderecoManual}
+                    className="bg-gray-100 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-200"
+                  >
+                    Usar este endereço
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          {loading && (
+            <p className="text-sm text-gray-600 mb-4">Carregando sua localização…</p>
+          )}
+
+          {/* Sugestão de unidade mais próxima */}
+          {!loading && nearestUnitId && (
+            <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-green-700 font-semibold mb-1">Sugestão</p>
+                  <h3 className="text-lg font-bold text-gray-900">
+                    Unidade mais próxima: {unidades.find(u => u.id === nearestUnitId)?.nome}
+                  </h3>
+                  <p className="text-sm text-green-800 mt-1">
+                    Distância {getDistanciaString(unidades.find(u => u.id === nearestUnitId))}
+                    {userLocation && ` • Tempo ${getTempoEstimado(unidades.find(u => u.id === nearestUnitId))}`}
+                    {geoSource==='gps' && ' • Baseado no GPS'}
+                    {geoSource==='manual' && ' • Baseado no endereço informado'}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="primary"
+                    onClick={() => setSelectedUnit(unidades.find(u => u.id === nearestUnitId))}
+                  >
+                    Ver detalhes
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={() => abrirRotaGoogle(unidades.find(u => u.id === nearestUnitId))}
+                  >
+                    Traçar rota
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Controles */}
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-gray-900">Unidades próximas</h2>
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-gray-600">Ordenar por:</span>
+              <button
+                className={`px-2 py-1 rounded ${sortMode==='distance' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700'}`}
+                onClick={() => setSortMode('distance')}
+              >
+                Distância
+              </button>
+              <button
+                className={`px-2 py-1 rounded ${sortMode==='name' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700'}`}
+                onClick={() => setSortMode('name')}
+              >
+                Nome
+              </button>
+            </div>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid lg:grid-cols-1 gap-8">
             {/* Lista de Unidades */}
             <div className="lg:col-span-1 space-y-4">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
-                Unidades Disponíveis
-              </h2>
-              
-              {unidades.map((unidade) => (
+              {unidadesOrdenadas.map((unidade) => (
                 <div 
                   key={unidade.id}
                   className={`bg-white rounded-lg shadow-md p-4 cursor-pointer transition-all ${
@@ -231,16 +354,34 @@ export default function MapaUnidades() {
                 >
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="font-semibold text-gray-900">{unidade.nome}</h3>
-                    {userLocation && (
-                      <span className="text-sm text-green-600 font-medium">
-                        {getDistanciaString(unidade)}
-                      </span>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {nearestUnitId === unidade.id && (
+                        <span className="text-[10px] uppercase tracking-wide bg-green-100 text-green-800 px-2 py-0.5 rounded-full">Recomendado</span>
+                      )}
+                      {userLocation && (
+                        <>
+                          <span className="text-sm text-green-600 font-medium">
+                            {getDistanciaString(unidade)}
+                          </span>
+                          <span className="text-[11px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                            {getTempoEstimado(unidade)}
+                          </span>
+                        </>
+                      )}
+                    </div>
                   </div>
-                  
-                  <p className="text-sm text-gray-600 mb-2">{unidade.endereco}</p>
+
+                  <p className="text-sm text-gray-600 mb-2 flex items-center gap-2">
+                    <span>{unidade.endereco}</span>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); copiarEndereco(unidade.endereco); }}
+                      className="text-xs text-gray-600 hover:text-gray-900 underline"
+                    >
+                      Copiar
+                    </button>
+                  </p>
                   <p className="text-sm text-gray-500 mb-3">{unidade.horario}</p>
-                  
+
                   <div className="flex flex-wrap gap-1 mb-3">
                     {unidade.especialidades.map((esp, index) => (
                       <span 
@@ -251,6 +392,10 @@ export default function MapaUnidades() {
                       </span>
                     ))}
                   </div>
+
+                  {userLocation && (
+                    <p className="text-xs text-gray-600 mb-3">Tempo estimado: {getTempoEstimado(unidade)} { !isGeoExact && '(aprox.)' }</p>
+                  )}
 
                   <div className="flex gap-2">
                     <button
@@ -280,101 +425,74 @@ export default function MapaUnidades() {
               ))}
             </div>
 
-            {/* Mapa */}
-            <div className="lg:col-span-2">
-              <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                <div className="p-4 border-b border-gray-200">
-                  <h2 className="text-xl font-bold text-gray-900">Mapa das Unidades</h2>
-                  {loading && (
-                    <p className="text-sm text-gray-600">Carregando sua localização...</p>
-                  )}
+            {/* Removido: Mapa interativo. Exibimos apenas a lista e, opcionalmente, detalhes abaixo. */}
+          </div>
+
+          {/* Detalhes da Unidade Selecionada (abaixo da lista) */}
+          {selectedUnit && (
+            <div className="mt-6 bg-white rounded-lg shadow-md p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">
+                {selectedUnit.nome}
+              </h3>
+              
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-2">Endereço:</h4>
+                  <p className="text-gray-600 mb-4 flex items-center gap-2">
+                    <span>{selectedUnit.endereco}</span>
+                    <button
+                      onClick={() => copiarEndereco(selectedUnit.endereco)}
+                      className="text-xs text-gray-600 hover:text-gray-900 underline"
+                    >
+                      Copiar
+                    </button>
+                  </p>
+                  <p className="text-gray-600 mb-4">CEP: {selectedUnit.cep}</p>
+                  
+                  <h4 className="font-semibold text-gray-900 mb-2">Horário:</h4>
+                  <p className="text-gray-600">{selectedUnit.horario}</p>
                 </div>
                 
-                <div className="relative">
-                  {mapError ? (
-                    <div className="h-96 flex items-center justify-center bg-gray-100">
-                      <div className="text-center">
-                        <svg className="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <p className="text-gray-600">{mapError}</p>
-                        <button 
-                          onClick={() => window.location.reload()}
-                          className="mt-2 text-green-600 hover:text-green-700 underline"
-                        >
-                          Recarregar página
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div 
-                      ref={mapRef} 
-                      className="h-96 w-full"
-                      style={{ minHeight: '400px' }}
-                    />
-                  )}
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-2">Contato:</h4>
+                  <p className="text-gray-600 mb-4">{selectedUnit.telefone}</p>
+                  
+                  <h4 className="font-semibold text-gray-900 mb-2">Especialidades:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedUnit.especialidades.map((esp, index) => (
+                      <span 
+                        key={index}
+                        className="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full"
+                      >
+                        {esp}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {/* Detalhes da Unidade Selecionada */}
-              {selectedUnit && (
-                <div className="mt-6 bg-white rounded-lg shadow-md p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">
-                    {selectedUnit.nome}
-                  </h3>
-                  
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">Endereço:</h4>
-                      <p className="text-gray-600 mb-4">{selectedUnit.endereco}</p>
-                      <p className="text-gray-600 mb-4">CEP: {selectedUnit.cep}</p>
-                      
-                      <h4 className="font-semibold text-gray-900 mb-2">Horário:</h4>
-                      <p className="text-gray-600">{selectedUnit.horario}</p>
-                    </div>
-                    
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">Contato:</h4>
-                      <p className="text-gray-600 mb-4">{selectedUnit.telefone}</p>
-                      
-                      <h4 className="font-semibold text-gray-900 mb-2">Especialidades:</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedUnit.especialidades.map((esp, index) => (
-                          <span 
-                            key={index}
-                            className="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full"
-                          >
-                            {esp}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 flex gap-4">
-                    <button
-                      onClick={() => abrirRotaGoogle(selectedUnit)}
-                      className="flex-1 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-medium"
-                    >
-                      <svg className="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 4m0 13V4m0 0L9 7" />
-                      </svg>
-                      Traçar Rota no Google Maps
-                    </button>
-                    <a 
-                      href={`tel:${selectedUnit.telefone}`}
-                      className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
-                    >
-                      <svg className="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                      </svg>
-                      Ligar
-                    </a>
-                  </div>
-                </div>
-              )}
+              <div className="mt-6 flex gap-4">
+                <button
+                  onClick={() => abrirRotaGoogle(selectedUnit)}
+                  className="flex-1 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-medium"
+                >
+                  <svg className="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 4m0 13V4m0 0L9 7" />
+                  </svg>
+                  Traçar Rota no Google Maps
+                </button>
+                <a 
+                  href={`tel:${selectedUnit.telefone}`}
+                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                >
+                  <svg className="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                  Ligar
+                </a>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Botões de Navegação */}
           <div className="mt-8 flex flex-col sm:flex-row gap-4">
@@ -389,7 +507,6 @@ export default function MapaUnidades() {
               </Button>
             </Link>
           </div>
-        </div>
       </main>
 
       <Footer />

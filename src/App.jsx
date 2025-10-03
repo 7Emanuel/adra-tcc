@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
 import Doar from './pages/Doar';
 import EmBreve from './pages/EmBreve';
@@ -18,6 +19,7 @@ import ComoFunciona from './pages/ComoFunciona';
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         {/* Rotas já existentes */}
         <Route path="/" element={<Home />} />

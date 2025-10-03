@@ -17,6 +17,7 @@
     "leaflet": "^1.9.4",
     "libphonenumber-js": "^1.12.15",
     "lucide-react": "^0.542.0",
+    "nodemailer": "^7.0.6",
     "nodemon": "^3.1.10",
     "qrcode.react": "^4.2.0",
     "react": "^19.1.1",

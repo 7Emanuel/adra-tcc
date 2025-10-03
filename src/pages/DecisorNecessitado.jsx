@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthService } from '../services/AuthService';
 import Button from '../components/Button';
-import Header from '../components/Header';
 import Footer from '../components/Footer';
 import NeedsSelector from '../components/necessitado/NeedsSelector';
 import { motion, AnimatePresence } from 'framer-motion';
+ 
 
 const DecisorNecessitado = () => {
   const navigate = useNavigate();
@@ -48,7 +48,6 @@ const DecisorNecessitado = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
       
       <main className="pt-20 pb-16">
         <div className="container mx-auto px-4">

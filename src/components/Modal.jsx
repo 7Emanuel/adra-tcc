@@ -48,7 +48,7 @@ const Modal = ({ isOpen, onClose, title, children, primaryAction, secondaryActio
       {/* Modal Content */}
       <div 
         ref={modalRef}
-        className="relative bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4 z-10"
+        className="relative bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4 z-10 flex flex-col max-h-[85vh]"
       >
         {/* Title */}
         <h2 
@@ -61,7 +61,7 @@ const Modal = ({ isOpen, onClose, title, children, primaryAction, secondaryActio
         </h2>
         
         {/* Content */}
-        <div className="mb-6 text-gray-600">
+        <div className="mb-6 text-gray-600 flex-1 overflow-y-auto">
           {children}
         </div>
         
