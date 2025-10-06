@@ -109,10 +109,10 @@ npm run preview      # Preview do build
 ### Fluxo do Usuário Necessitado:
 1. **Acesse**: `http://localhost:5173/`
 2. **Clique**: "Preciso de Ajuda" no cabeçalho
-3. **Aguarde**: Redirecionamento automático (2s)
-4. **Digite**: Código de verificação `123456`
-5. **Preencha**: Endereço e itens necessários
-6. **Envie**: Pedido completo
+3. **Aguarde**: Redirecionamento automático para a página “Sua conta está em análise”
+4. **Validação manual**: Um administrador da ADRA aprovará seu cadastro
+5. Após aprovado, você terá acesso ao formulário de pedido
+6. Preencha endereço e itens necessários e envie o pedido
 
 Veja `GUIA_TESTE_FLUXO.md` para instruções detalhadas.
 
@@ -158,7 +158,7 @@ src/
 │   ├── ItemsService.js
 │   ├── UnitsService.js
 │   ├── GeoService.js
-│   ├── VerificationService.js
+│   ├── (removido) VerificationService.js
 │   └── LocationService.js
 ├── data/                  # Dados mock JSON
 │   ├── donations.json     # PIX e dados bancários
@@ -176,7 +176,7 @@ src/
 - `/doar` - **Página principal de doações** (PIX, itens, mapa)
 - `/preciso-de-ajuda` - Gateway de autenticação
 - `/login-cadastro` - Login e cadastro de usuários
-- `/espera-validacao` - Verificação de código
+- `/espera-validacao` - Página “Sua conta está em análise” (validação manual)
 - `/pedir-doacao` - Formulário de pedido
 - `/em-breve` - Páginas em desenvolvimento
 
@@ -202,7 +202,7 @@ src/
 
 - `adra_user` - Dados do usuário autenticado
 - `adra_donation_draft` - Rascunho do pedido
-- `adra_verification_attempts` - Controle de tentativas
+- `adra_verification_attempts` - (descontinuado) Controle de tentativas
 
 ## 🌐 Deploy
 

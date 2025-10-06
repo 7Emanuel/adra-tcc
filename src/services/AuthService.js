@@ -10,6 +10,10 @@ export const AuthService = {
       email: 'joao@email.com',
       telefone: '(11) 99999-9999',
       senha: '123456',
+      // Novo fluxo: status de verificação manual
+      // 'pending' | 'approved' | 'rejected'
+      verificationStatus: 'pending',
+      // Compatibilidade retroativa (não usar diretamente no novo fluxo)
       isVerified: false,
       createdAt: new Date().toISOString()
     }
@@ -32,6 +36,9 @@ export const AuthService = {
       email,
       telefone,
       senha, // Em produção, a senha seria hasheada
+      // Novo: começa como pendente para validação manual do admin
+      verificationStatus: 'pending',
+      // Campo legado para compatibilidade com checagens antigas
       isVerified: false,
       createdAt: new Date().toISOString()
     };
@@ -83,21 +90,33 @@ export const AuthService = {
   // Verificar se o usuário está verificado
   isVerified() {
     const user = this.getUser();
-    return user && user.isVerified;
+    // Considera verificado apenas quando status for 'approved'
+    return !!user && (user.verificationStatus === 'approved' || user.isVerified === true);
   },
 
-  // Definir status de verificação
-  setVerificationStatus(isVerified) {
+  // Definir status de verificação (novo fluxo)
+  // Aceita: 'pending' | 'approved' | 'rejected' | boolean (legado)
+  setVerificationStatus(status) {
     const user = this.getUser();
-    if (user) {
-      user.isVerified = isVerified;
-      localStorage.setItem('adra_user', JSON.stringify(user));
-      
-      // Atualizar também no mockUsers
-      const mockUser = this.mockUsers.find(u => u.id === user.id);
-      if (mockUser) {
-        mockUser.isVerified = isVerified;
-      }
+    if (!user) return;
+
+    // Normaliza entrada booleana legado
+    let normalized = status;
+    if (typeof status === 'boolean') {
+      normalized = status ? 'approved' : 'pending';
+    }
+
+    // Aplica alterações no usuário em sessão
+    user.verificationStatus = normalized;
+    // Mantém campo legado em sincronia
+    user.isVerified = normalized === 'approved';
+    localStorage.setItem('adra_user', JSON.stringify(user));
+
+    // Atualiza também no mockUsers
+    const mockUser = this.mockUsers.find(u => u.id === user.id);
+    if (mockUser) {
+      mockUser.verificationStatus = normalized;
+      mockUser.isVerified = normalized === 'approved';
     }
   },
 
@@ -109,6 +128,7 @@ export const AuthService = {
       nome: 'Usuário Demonstração',
       email: 'demo@adra.com',
       telefone: '(11) 99999-9999',
+      verificationStatus: 'pending',
       isVerified: false,
       createdAt: new Date().toISOString()
     };

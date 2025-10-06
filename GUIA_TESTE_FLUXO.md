@@ -24,9 +24,9 @@
 - Após autenticação, será redirecionado para a página de validação
 
 ### 4. Página de Espera/Validação (/espera-validacao)
-- Digite o código de verificação: **123456**
-- Clique em "Verificar Código"
-- O sistema validará e redirecionará para a página de pedido
+- A tela exibe: “Sua conta está em análise”
+- A validação agora é manual, feita por um administrador
+- Após aprovado, você será redirecionado para a página de pedido
 
 ### 5. Página de Pedido de Doação (/pedir-doacao)
 - **Endereço**: Clique em "Usar Localização Atual" ou preencha manualmente
@@ -51,8 +51,8 @@
 
 ### 🔄 Fluxo de Redirecionamento Inteligente
 - Usuário não logado → Login/Cadastro
-- Usuário logado mas não verificado → Validação
-- Usuário logado e verificado → Formulário de pedido
+- Usuário logado com status `pending` → Tela de espera/validação
+- Usuário logado com status `approved` → Formulário de pedido
 
 ### 📍 Localização
 - Integração com Geolocation API
@@ -76,11 +76,11 @@
 - Breakpoints otimizados
 - Interface adaptativa
 
-## Códigos de Teste
+## Usuário de Teste
 
-- **Usuário de teste**: Email `joao@email.com`, Senha `123456`
-- **Código de Verificação**: `123456`
-- **Outros códigos**: Rejeitados automaticamente
+- Email `joao@email.com`, Senha `123456`
+- Para simular aprovação manual, ajuste o status via console:
+  `AuthService.setVerificationStatus('approved')`
 
 ## Navegação
 
@@ -88,20 +88,20 @@
 - `/` - Página inicial
 - `/preciso-de-ajuda` - Decisor (gateway de verificação)
 - `/login-cadastro` - Autenticação
-- `/espera-validacao` - Verificação de código
+- `/espera-validacao` - Tela de espera por validação manual
 - `/pedir-doacao` - Formulário de pedido
 
 ### Estados do Usuário:
 - **Não autenticado**: Redireciona para login/cadastro
-- **Autenticado não verificado**: Permanece na validação
-- **Autenticado e verificado**: Acesso ao formulário de pedido
+- **Autenticado (pending)**: Permanece na validação
+- **Autenticado (approved)**: Acesso ao formulário de pedido
 
 ## Persistência
 
 ### localStorage Keys:
 - `adra_user` - Dados do usuário autenticado
 - `adra_donation_draft` - Rascunho do pedido
-- `adra_verification_attempts` - Tentativas de verificação
+- `adra_verification_attempts` - (descontinuado)
 
 ## Cenários de Teste
 
@@ -110,16 +110,16 @@
 2. Será redirecionado para `/login-cadastro`
 3. Clique "Criar nova conta"
 4. Preencha todos os campos obrigatórios
-5. Após cadastro, será redirecionado para verificação
-6. Digite código `123456`
+5. Após cadastro, será redirecionado para página de espera
+6. Aguarde a aprovação (ou simule via console)
 7. Preencha o formulário de pedido
 
 ### Cenário 2: Usuário Existente
 1. Clique "Preciso de Ajuda"
 2. Será redirecionado para `/login-cadastro`
 3. Use email `joao@email.com` e senha `123456`
-4. Após login, será redirecionado para verificação
-5. Digite código `123456`
+4. Após login, será redirecionado para página de espera
+5. Aguarde a aprovação (ou simule via console)
 6. Preencha o formulário de pedido
 
 ### Cenário 3: Usuário Já Logado
@@ -130,7 +130,7 @@
 ## Próximos Passos
 
 1. **Backend Integration**: Substituir AuthService por APIs reais
-2. **Validação por SMS**: Implementar envio real de códigos
+2. **Validação manual/admin**: Integrar com backend para aprovar/reprovar
 3. **Upload de Imagens**: Implementar anexos para itens
 4. **Notificações**: Sistema de push/email
 5. **Chat**: Comunicação com doadores

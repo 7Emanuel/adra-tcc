@@ -46,8 +46,8 @@ const PaginaPedidoDoacao = () => {
       
       const currentUser = AuthService.getUser();
       
-      // Guard: apenas usuários verificados podem acessar
-      if (currentUser.verificationStatus !== 'verified') {
+      // Guard: apenas usuários aprovados podem acessar
+      if (currentUser.verificationStatus !== 'approved' && currentUser.isVerified !== true) {
         navigate('/espera-validacao', { replace: true });
         return;
       }
@@ -271,7 +271,7 @@ const PaginaPedidoDoacao = () => {
           </h1>
           
           <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-            Obrigado, <strong>{user.fullName}</strong>! Recebemos seu pedido e nossa equipe 
+            Obrigado, <strong>{user.nome}</strong>! Recebemos seu pedido e nossa equipe 
             entrará em contato em breve para confirmar os detalhes e coordenar a entrega.
           </p>
           
@@ -319,7 +319,7 @@ const PaginaPedidoDoacao = () => {
               Faça seu pedido de doações
             </h1>
             <p className="text-lg text-gray-600">
-              Olá, <strong>{user?.fullName}</strong>! Preencha os dados abaixo para solicitar as doações que você precisa.
+              Olá, <strong>{user?.nome}</strong>! Preencha os dados abaixo para solicitar as doações que você precisa.
             </p>
           </div>
 
@@ -355,7 +355,7 @@ const PaginaPedidoDoacao = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div>
                   <span className="text-gray-600">Nome completo:</span>
-                  <p className="font-medium text-gray-900">{user.fullName}</p>
+                  <p className="font-medium text-gray-900">{user.nome}</p>
                 </div>
                 <div>
                   <span className="text-gray-600">E-mail:</span>
@@ -363,7 +363,7 @@ const PaginaPedidoDoacao = () => {
                 </div>
                 <div>
                   <span className="text-gray-600">Telefone:</span>
-                  <p className="font-medium text-gray-900">{user.phone}</p>
+                  <p className="font-medium text-gray-900">{user.telefone}</p>
                 </div>
                 <div>
                   <span className="text-gray-600">Status:</span>

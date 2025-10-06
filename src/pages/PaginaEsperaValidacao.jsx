@@ -1,18 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthService } from '../services/AuthService';
-import { VerificationService } from '../services/VerificationService';
 import Button from '../components/Button';
 import InfoBanner from '../components/necessitado/InfoBanner';
 
 const PaginaEsperaValidacao = () => {
   const navigate = useNavigate();
-  const [code, setCode] = useState('');
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [isResending, setIsResending] = useState(false);
   const [user, setUser] = useState(null);
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
     // Verifica se usuário está logado e com status correto
@@ -26,99 +21,23 @@ const PaginaEsperaValidacao = () => {
       
       const currentUser = AuthService.getUser();
       setUser(currentUser);
-      
-      // Se já verificado, redireciona para página de pedido
-      if (currentUser.verificationStatus === 'verified') {
+      // TODO: Integrar com banco de dados para verificar status do usuário
+      // status: "pending" | "approved" | "rejected"
+      // Quando integrar:
+      // - pending -> manter nesta tela
+      // - approved -> navigate('/pedir-doacao', { replace: true })
+      // - rejected -> exibir mensagem de reprovação e orientações
+
+      // Fluxo atual MOCK: se marcado como aprovado manualmente no localStorage, segue
+      if (currentUser.verificationStatus === 'approved' || currentUser.isVerified === true) {
         navigate('/pedir-doacao', { replace: true });
+        return;
       }
+      setChecking(false);
     };
 
     checkUserAccess();
   }, [navigate]);
-
-  const handleCodeChange = (value) => {
-    // Remove caracteres não numéricos e limita a 6 dígitos
-    const cleanValue = value.replace(/\D/g, '').substring(0, 6);
-    setCode(cleanValue);
-    setError('');
-  };
-
-  const handleVerifyCode = async () => {
-    if (!code) {
-      setError('Digite o código de 6 dígitos');
-      return;
-    }
-
-    if (code.length !== 6) {
-      setError('O código deve ter exatamente 6 dígitos');
-      return;
-    }
-
-    setIsVerifying(true);
-    setError('');
-
-    try {
-      console.log('[PaginaEsperaValidacao] Verificando código:', code);
-      
-      const result = await VerificationService.validateCode(code);
-      
-      if (result.ok) {
-        // Atualiza status para verificado
-        AuthService.setVerificationStatus('verified');
-        setSuccess('Código verificado com sucesso! Redirecionando...');
-        
-        // Redireciona após 2 segundos
-        setTimeout(() => {
-          navigate('/pedir-doacao', { replace: true });
-        }, 2000);
-      } else {
-        setError(result.error || 'Código inválido');
-        setCode(''); // Limpa o código em caso de erro
-      }
-    } catch (error) {
-      console.error('[PaginaEsperaValidacao] Erro ao verificar código:', error);
-      setError('Erro ao verificar código. Tente novamente.');
-    } finally {
-      setIsVerifying(false);
-    }
-  };
-
-  const handleResendCode = async () => {
-    if (!VerificationService.canResendCode()) {
-      setError('Aguarde 1 minuto antes de solicitar um novo código');
-      return;
-    }
-
-    setIsResending(true);
-    setError('');
-
-    try {
-      console.log('[PaginaEsperaValidacao] Reenviando código...');
-      
-      const result = await VerificationService.resendCode('email');
-      
-      if (result.ok) {
-        setSuccess('Código reenviado com sucesso!');
-        VerificationService._markCodeSent();
-        
-        // Limpa mensagem de sucesso após 3 segundos
-        setTimeout(() => setSuccess(''), 3000);
-      } else {
-        setError('Erro ao reenviar código. Tente novamente.');
-      }
-    } catch (error) {
-      console.error('[PaginaEsperaValidacao] Erro ao reenviar código:', error);
-      setError('Erro ao reenviar código. Tente novamente.');
-    } finally {
-      setIsResending(false);
-    }
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && code.length === 6 && !isVerifying) {
-      handleVerifyCode();
-    }
-  };
 
   if (!user) {
     return (
@@ -146,13 +65,20 @@ const PaginaEsperaValidacao = () => {
             </div>
             
             <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Estamos validando sua conta
+              Sua conta está em análise 🕒
             </h1>
             
-            <p className="text-lg text-gray-600 leading-relaxed">
-              Olá, <strong>{user.fullName}</strong>! Para sua segurança e para evitar fraudes, 
-              enviamos um código de verificação para seu e-mail.
-            </p>
+            <div className="text-lg text-gray-600 leading-relaxed space-y-3">
+              <p>
+                Agradecemos por se cadastrar!
+                Nossa equipe da <strong>ADRA</strong> está analisando suas informações para confirmar sua solicitação de ajuda.
+                Assim que sua conta for validada, você poderá acessar normalmente o sistema.
+              </p>
+              <p>
+                Enquanto isso, fique tranquilo — entraremos em contato assim que a validação for concluída.
+              </p>
+              <p className="text-sm text-gray-500">(Esta verificação agora é feita diretamente pelo administrador do sistema.)</p>
+            </div>
           </div>
 
           {/* User Info */}
@@ -167,7 +93,13 @@ const PaginaEsperaValidacao = () => {
               </div>
               <div>
                 <span className="text-gray-600">Telefone:</span>
-                <p className="font-medium text-gray-900">{user.phone}</p>
+                <p className="font-medium text-gray-900">{user.telefone}</p>
+              </div>
+              <div>
+                <span className="text-gray-600">Status:</span>
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                  Pendente de validação
+                </span>
               </div>
             </div>
           </div>
@@ -179,117 +111,32 @@ const PaginaEsperaValidacao = () => {
             className="mb-8"
           >
             <p className="text-sm">
-              Para sua segurança e para evitar fraudes, só liberamos pedidos após a verificação. 
-              Este processo garante que apenas pessoas reais façam solicitações.
+              Após a aprovação, liberaremos o acesso às funcionalidades para solicitar doações.
             </p>
           </InfoBanner>
 
-          {/* Verification Form */}
-          <div className="bg-white rounded-2xl p-8 shadow-sm">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4 text-center">
-              Código de Verificação
-            </h2>
-            
-            <p className="text-center text-gray-600 mb-6">
-              Insira o código de 6 dígitos enviado para seu e-mail:
+          {/* Status Block */}
+          <div className="bg-white rounded-2xl p-8 shadow-sm text-center">
+            <div className="flex items-center justify-center mb-4">
+              <div className="w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full animate-spin" aria-hidden="true"></div>
+            </div>
+            <p className="text-gray-700 mb-4">
+              Aguardando validação da equipe da ADRA...
             </p>
-
-            {/* Code Input */}
-            <div className="mb-6">
-              <div className="flex justify-center mb-4">
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  value={code}
-                  onChange={(e) => handleCodeChange(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="000000"
-                  maxLength="6"
-                  className={`
-                    text-center text-2xl font-mono tracking-widest w-48 px-4 py-3 
-                    border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500
-                    ${error ? 'border-red-500' : 'border-gray-300'}
-                    ${success ? 'border-green-500 bg-green-50' : ''}
-                  `}
-                  disabled={isVerifying || success}
-                  aria-label="Código de verificação de 6 dígitos"
-                  aria-describedby={error ? "code-error" : success ? "code-success" : "code-help"}
-                />
-              </div>
-              
-              <p id="code-help" className="text-xs text-center text-gray-500 mb-2">
-                Digite apenas os números, sem espaços ou traços
-              </p>
-
-              {/* Error Message */}
-              {error && (
-                <div 
-                  id="code-error"
-                  className="text-sm text-red-600 text-center bg-red-50 border border-red-200 rounded-lg p-3"
-                  role="alert"
-                  aria-live="polite"
-                >
-                  {error}
-                </div>
-              )}
-
-              {/* Success Message */}
-              {success && (
-                <div 
-                  id="code-success"
-                  className="text-sm text-green-600 text-center bg-green-50 border border-green-200 rounded-lg p-3"
-                  role="alert"
-                  aria-live="polite"
-                >
-                  {success}
-                </div>
-              )}
-            </div>
-
-            {/* Action Buttons */}
-            <div className="space-y-4">
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={handleVerifyCode}
-                disabled={code.length !== 6 || isVerifying || success}
-                className="w-full"
-              >
-                {isVerifying ? (
-                  <>
-                    <svg className="w-5 h-5 animate-spin mr-2" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Verificando...
-                  </>
-                ) : (
-                  'Enviar Código'
-                )}
-              </Button>
-
-              <div className="text-center">
-                <button
-                  onClick={handleResendCode}
-                  disabled={isResending || success || !VerificationService.canResendCode()}
-                  className="text-sm text-green-600 hover:text-green-500 underline disabled:text-gray-400 disabled:no-underline focus:outline-none focus:ring-2 focus:ring-green-500 rounded"
-                >
-                  {isResending ? 'Reenviando...' : 'Reenviar código'}
-                </button>
-              </div>
-            </div>
+            <Button variant="primary" size="lg" disabled className="w-full opacity-70 cursor-not-allowed">
+              Aguardando validação da equipe da ADRA...
+            </Button>
           </div>
 
           {/* Help Section */}
           <div className="mt-8 text-center space-y-4">
             <InfoBanner type="neutral" className="text-left">
               <div className="space-y-2 text-sm">
-                <p><strong>Não recebeu o código?</strong></p>
+                <p><strong>Como funciona?</strong></p>
                 <ul className="list-disc list-inside space-y-1 ml-4">
-                  <li>Verifique sua caixa de spam/lixo eletrônico</li>
-                  <li>Aguarde alguns minutos, os e-mails podem demorar</li>
-                  <li>Clique em "Reenviar código" se necessário</li>
+                  <li>Um(a) administrador(a) irá conferir seus dados</li>
+                  <li>Você poderá ser contatado(a) para confirmação</li>
+                  <li>Após aprovação, o acesso é liberado automaticamente</li>
                 </ul>
               </div>
             </InfoBanner>
@@ -301,10 +148,7 @@ const PaginaEsperaValidacao = () => {
                 <p>✉️ E-mail: suporte@adra.org.br</p>
               </div>
             </div>
-
-            <p className="text-xs text-gray-400">
-              * Para teste: use o código <code className="bg-gray-100 px-1 rounded">123456</code>
-            </p>
+            <p className="text-xs text-gray-400">“A esperança é o primeiro passo para a mudança. 💛”</p>
           </div>
         </div>
       </div>
