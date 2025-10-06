@@ -7,12 +7,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Paleta oficial ADRA Brasil
-        'adra-green': '#007B4B', // primária
-        'adra-gold': '#FFC60B',  // destaque
-        'adra-white': '#FFFFFF',
-        'adra-gray-light': '#F5F5F5',
-        'adra-gray-dark': '#333333',
+        'adra-green': '#0A6159',
+        'adra-green-light': '#2AB3A3',
+        'adra-accent': '#F5B700',
+        'adra-bg': '#F4F6F8',
+        'adra-text': '#1F2937',
+        'adra-text-secondary': '#475569',
       },
     },
   },

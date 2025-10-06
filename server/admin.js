@@ -10,7 +10,7 @@ dotenv.config();
 const router = express.Router();
 
 // Config
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '12345678910';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'daniel';
 const ADMIN_SESSION_SECRET = process.env.ADMIN_SESSION_SECRET || 'admin-dev-secret';
 const ADMIN_AUTH_DISABLED = String(process.env.ADMIN_AUTH_DISABLED || '').toLowerCase() === 'true';
 const SESSION_EXPIRES_HOURS = 12; // 12h
@@ -81,20 +81,7 @@ function requireAdmin(req, res, next) {
 }
 
 // Login
-// Em desenvolvimento, quando ADMIN_AUTH_DISABLED=true, permite login sem senha
 router.post('/login', rateLimitLogin, (req, res) => {
-  if (ADMIN_AUTH_DISABLED) {
-    const token = signAdminToken({ at: Date.now(), bypass: true });
-    const isProd = process.env.NODE_ENV === 'production';
-    res.cookie('admin_session', token, {
-      httpOnly: true,
-      secure: isProd,
-      sameSite: 'lax',
-      maxAge: SESSION_EXPIRES_HOURS * 60 * 60 * 1000,
-      path: '/',
-    });
-    return res.json({ ok: true, bypass: true });
-  }
   const { password } = req.body || {};
   if (!password || typeof password !== 'string') {
     return res.status(400).json({ error: 'Senha ausente' });
