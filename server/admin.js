@@ -31,8 +31,14 @@ async function ensureJson(filePath, fallback = '[]') {
 
 async function readJson(filePath) {
   await ensureJson(filePath);
-  const txt = await fs.readFile(filePath, 'utf-8');
-  return JSON.parse(txt || '[]');
+  try {
+    const txt = await fs.readFile(filePath, 'utf-8');
+    return JSON.parse(txt || '[]');
+  } catch (e) {
+    console.warn(`[admin] JSON inválido em ${filePath}. Resetando para []`);
+    await fs.writeFile(filePath, '[]', 'utf-8');
+    return [];
+  }
 }
 
 async function writeJson(filePath, data) {
