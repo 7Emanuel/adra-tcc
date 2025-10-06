@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
 import { AuthService } from '../services/AuthService';
+import { api } from '../services/apiClient';
 
 const LoginCadastro = () => {
   const navigate = useNavigate();
@@ -76,13 +77,29 @@ const LoginCadastro = () => {
           setErrors({ email: 'Email ou senha incorretos' });
         }
       } else {
-        // Simular cadastro
+        // Simular cadastro (client-side)
         const user = AuthService.register({
           nome: formData.nome,
           email: formData.email,
           telefone: formData.telefone,
           senha: formData.senha
         });
+
+        // Enviar beneficiário para backend (arquivo), sem travar o fluxo se falhar
+        try {
+          await api('/api/beneficiaries', {
+            method: 'POST',
+            body: {
+              nome: formData.nome,
+              email: formData.email,
+              telefone: formData.telefone,
+              cidade: '',
+              estado: ''
+            }
+          });
+        } catch (e) {
+          console.warn('Falha ao registrar beneficiário no backend (não bloqueante):', e?.message || e);
+        }
         navigate('/espera-validacao');
       }
     } catch (error) {

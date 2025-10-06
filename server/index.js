@@ -7,6 +7,7 @@ import adminRouter from './admin.js';
 import { registerUser, loginUser, getUserFromToken } from './auth.js';
 import fs from 'fs/promises';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 if (process.env.DATABASE_URL) {
@@ -23,6 +24,7 @@ app.use(cookieParser());
 // Simple file-based storage for pickup schedules
 const dataDir = path.resolve(process.cwd(), 'server', 'data');
 const schedulesFile = path.join(dataDir, 'schedules.json');
+const beneficiariesFile = path.join(dataDir, 'beneficiaries.json');
 
 async function ensureDataFile() {
   try {
@@ -44,6 +46,28 @@ async function readSchedules() {
 async function writeSchedules(list) {
   await ensureDataFile();
   await fs.writeFile(schedulesFile, JSON.stringify(list, null, 2), 'utf-8');
+}
+
+async function ensureBeneficiariesFile() {
+  try {
+    await fs.mkdir(dataDir, { recursive: true });
+    await fs.access(beneficiariesFile).catch(async () => {
+      await fs.writeFile(beneficiariesFile, '[]', 'utf-8');
+    });
+  } catch (e) {
+    console.error('Erro ao preparar storage de beneficiários', e);
+  }
+}
+
+async function readBeneficiaries() {
+  await ensureBeneficiariesFile();
+  const txt = await fs.readFile(beneficiariesFile, 'utf-8');
+  return JSON.parse(txt || '[]');
+}
+
+async function writeBeneficiaries(list) {
+  await ensureBeneficiariesFile();
+  await fs.writeFile(beneficiariesFile, JSON.stringify(list, null, 2), 'utf-8');
 }
 
 // Health
@@ -91,6 +115,55 @@ app.get('/auth/me', (req, res) => {
 
 // Admin API
 app.use('/api/admin', adminRouter);
+
+// Public endpoint: ingest beneficiary from client registration (file-based)
+app.post('/api/beneficiaries', async (req, res) => {
+  try {
+    const now = new Date().toISOString();
+    const body = req.body || {};
+    const name = body.nome || body.name || '';
+    const email = body.email || '';
+    const phone = body.telefone || body.phone || '';
+    const city = body.cidade || body.city || '';
+    const state = body.estado || body.state || '';
+    const document = body.document || null; // { type, value } opcional
+
+    if (!name || !email) {
+      return res.status(400).json({ error: 'Nome e email são obrigatórios' });
+    }
+
+    const all = await readBeneficiaries();
+    const byEmailIdx = all.findIndex(b => (b.email || '').toLowerCase() === String(email).toLowerCase());
+    const id = byEmailIdx >= 0 ? all[byEmailIdx].id : (body.id || `${Date.now()}-${Math.random().toString(36).slice(2,8)}`);
+
+    const record = {
+      id,
+      name,
+      email,
+      phone,
+      address: { city, state },
+      document: document || (body.cpf ? { type: 'CPF', value: body.cpf } : undefined),
+      status: 'pending',
+      createdAt: byEmailIdx >= 0 ? all[byEmailIdx].createdAt : now,
+      notes: byEmailIdx >= 0 ? all[byEmailIdx].notes : '',
+      history: [
+        ...(byEmailIdx >= 0 ? (all[byEmailIdx].history || []) : []),
+        { at: now, by: 'system', action: byEmailIdx >= 0 ? 'update' : 'create', details: '' }
+      ]
+    };
+
+    if (byEmailIdx >= 0) {
+      all[byEmailIdx] = { ...all[byEmailIdx], ...record };
+    } else {
+      all.push(record);
+    }
+    await writeBeneficiaries(all);
+    return res.status(201).json({ ok: true, id });
+  } catch (e) {
+    console.error('Erro ao registrar beneficiário (arquivo)', e);
+    res.status(500).json({ error: 'Erro ao registrar beneficiário' });
+  }
+});
 
 // List users (temporário demo)
 app.get('/users', async (_req, res) => {
