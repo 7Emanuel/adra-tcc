@@ -1,17 +1,24 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 import { initDb, prisma } from './db.js';
+import adminRouter from './admin.js';
 import { registerUser, loginUser, getUserFromToken } from './auth.js';
 import fs from 'fs/promises';
 import path from 'path';
 
 dotenv.config();
-await initDb();
+if (process.env.DATABASE_URL) {
+  await initDb();
+} else {
+  console.warn('⚠️ DATABASE_URL não definido; pulando conexão Prisma.');
+}
 
 const app = express();
 app.use(cors({ origin: '*', credentials: true }));
 app.use(express.json());
+app.use(cookieParser());
 
 // Simple file-based storage for pickup schedules
 const dataDir = path.resolve(process.cwd(), 'server', 'data');
@@ -81,6 +88,9 @@ app.get('/auth/me', (req, res) => {
   if (!req.user) return res.status(401).json({ error: 'Não autenticado' });
   res.json(req.user);
 });
+
+// Admin API
+app.use('/api/admin', adminRouter);
 
 // List users (temporário demo)
 app.get('/users', async (_req, res) => {

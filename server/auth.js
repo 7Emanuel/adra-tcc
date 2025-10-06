@@ -6,6 +6,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
 const JWT_EXPIRES = '1d';
 
 export async function registerUser({ name, email, senha, telefone, endereco, cidade, estado }) {
+  if (!prisma) throw new Error('DB indisponível');
   const hashed = await bcrypt.hash(senha, 10);
   const user = await prisma.user.create({
     data: { name, email, senha: hashed, telefone, endereco, cidade, estado }
@@ -14,6 +15,7 @@ export async function registerUser({ name, email, senha, telefone, endereco, cid
 }
 
 export async function loginUser({ email, senha }) {
+  if (!prisma) return null;
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) return null;
   const ok = await bcrypt.compare(senha, user.senha);
@@ -25,6 +27,7 @@ export async function loginUser({ email, senha }) {
 export async function getUserFromToken(token) {
   try {
     const payload = jwt.verify(token, JWT_SECRET);
+    if (!prisma) return null;
     const user = await prisma.user.findUnique({ where: { id: payload.sub } });
     if (!user) return null;
     return sanitize(user);

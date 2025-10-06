@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+:root{
+  --font-heading: 'Montserrat', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
+  --font-body: 'Open Sans', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
+}
+
+html, body, #root { height: 100%; }
+body { font-family: var(--font-body); color: #333333; background: #F5F5F5; }
+
+/* Títulos com fonte Montserrat */
+h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
+
 /* Glassmorphism styles */
 @layer utilities {
   .glass {
@@ -59,24 +70,8 @@ html {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Gradient text */
-.gradient-text {
-  @apply bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent;
-}
-
-/* Card hover effects */
-.card-hover {
-  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
-}
-
-/* Button variants */
-.btn-gradient {
-  @apply bg-gradient-to-r from-blue-600 to-green-600 text-white border-0;
-}
-
-.btn-gradient:hover {
-  @apply from-blue-700 to-green-700;
-}
+/* Card hover effects leves */
+.card-hover { @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1; }
 
 /* Maps container */
 .map-container {

@@ -10,6 +10,8 @@ import StepCard from '../components/StepCard';
 const Home = () => {
   const navigate = useNavigate();
   const [isDoarModalOpen, setIsDoarModalOpen] = useState(false);
+  const [adminOpen, setAdminOpen] = useState(false);
+  const [adminPassword, setAdminPassword] = useState('');
 
   // Navegar para o hub de doações em vez de abrir modal
   const handleDoarClick = () => navigate('/doar');
@@ -27,11 +29,11 @@ const Home = () => {
             <div className="flex flex-col lg:flex-row items-center gap-12">
               {/* Content */}
               <div className="flex-1 text-center lg:text-left">
-                <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-                  Conectamos quem quer ajudar com quem mais precisa.
+                <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-4 leading-tight">
+                  Transforme vidas com a sua doação.
                 </h1>
                 <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                  Uma plataforma simples e segura para doações efetivas e assistência digna.
+                  Juntos, podemos levar esperança a quem mais precisa.
                 </p>
                 
                 {/* CTAs */}
@@ -45,7 +47,7 @@ const Home = () => {
                     Quero Doar
                   </Button>
                   <Button 
-                    variant="secondary" 
+                    variant="accent" 
                     size="xl" 
                     onClick={handleAjudaClick}
                     className="w-full sm:w-auto"
@@ -57,10 +59,8 @@ const Home = () => {
 
               {/* Image/Illustration */}
               <div className="flex-1 flex justify-center">
-                <div className="w-full max-w-md h-96 bg-gradient-to-br from-green-600 to-green-500 rounded-3xl flex items-center justify-center shadow-2xl">
-                  <svg className="w-32 h-32 text-white opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
+                <div className="w-full max-w-md h-96 rounded-3xl shadow-2xl overflow-hidden">
+                  <img src="https://images.unsplash.com/photo-1526256262350-7da7584cf5eb?q=80&w=1200&auto=format&fit=crop" alt="Ação solidária" className="w-full h-full object-cover" />
                 </div>
               </div>
             </div>
@@ -311,7 +311,7 @@ const Home = () => {
         </section>
 
         {/* CTA Final Section */}
-        <section className="py-16 px-4 bg-gradient-to-r from-green-600 to-green-500">
+        <section className="py-16 px-4 bg-adra-green">
           <div className="container mx-auto text-center">
             <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
               Pronto para fazer a diferença?
@@ -325,7 +325,7 @@ const Home = () => {
                 variant="secondary" 
                 size="xl" 
                 onClick={handleDoarClick}
-                className="w-full sm:w-auto bg-white text-green-600 hover:bg-gray-100"
+                className="w-full sm:w-auto bg-white text-adra-green hover:bg-gray-100"
               >
                 Quero Doar
               </Button>
@@ -346,10 +346,59 @@ const Home = () => {
         </section>
       </main>
 
+      {/* Admin entry button (discreto no canto) */}
+      <button
+        onClick={() => setAdminOpen(true)}
+        aria-label="Entrar como administrador"
+        title="Entrar como administrador"
+        className="fixed bottom-5 right-5 z-40 inline-flex items-center justify-center rounded-full border border-gray-300 bg-white/80 text-gray-600 shadow-md backdrop-blur px-3 py-2 hover:bg-white hover:text-adra-green hover:shadow-lg opacity-70 hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-adra-green"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 11c.828 0 1.5.672 1.5 1.5S12.828 14 12 14s-1.5-.672-1.5-1.5S11.172 11 12 11z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 11V9a4 4 0 118 0v2m-9 0h10a2 2 0 012 2v5a2 2 0 01-2 2H7a2 2 0 01-2-2v-5a2 2 0 012-2z" />
+        </svg>
+        <span className="ml-2 hidden sm:inline text-xs font-medium">Admin</span>
+      </button>
+
       {/* Footer */}
       <Footer />
 
-      {/* Modals */}
+      {/* Modal Admin */}
+      <Modal
+        isOpen={adminOpen}
+        onClose={() => setAdminOpen(false)}
+        title="Entrar como administrador"
+        primaryAction={{
+          label: 'Entrar',
+          onClick: async () => {
+            try {
+              const res = await fetch('/api/admin/login', {
+                method: 'POST',
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify({ password: adminPassword })
+              });
+              if (!res.ok) throw new Error('Falha ao autenticar');
+              setAdminOpen(false);
+              navigate('/admin');
+            } catch (e) {
+              alert('Senha incorreta ou servidor indisponível.');
+            }
+          }
+        }}
+        secondaryAction={{ label: 'Cancelar', onClick: () => setAdminOpen(false) }}
+      >
+        <label className="block text-sm font-medium text-gray-700 mb-2">Senha</label>
+        <input
+          type="password"
+          value={adminPassword}
+          onChange={(e) => setAdminPassword(e.target.value)}
+          placeholder="Digite a senha do administrador"
+          className="form-input"
+        />
+        <p className="text-xs text-gray-500 mt-2">Senha padrão: 12345678910</p>
+      </Modal>
+
+      {/* Modals auxiliares existentes */}
       <Modal
         isOpen={isDoarModalOpen}
         onClose={() => setIsDoarModalOpen(false)}
@@ -391,6 +440,8 @@ const Home = () => {
           </div>
         </div>
       </Modal>
+
+      {/* Admin login modal removido para ambiente de desenvolvimento */}
     </div>
   );
 };

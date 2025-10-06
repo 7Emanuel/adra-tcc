@@ -92,6 +92,7 @@ npm run dev
 ### Scripts Disponíveis
 ```bash
 npm run dev          # Servidor de desenvolvimento
+npm run dev:server   # API Node/Express (porta 3000 por padrão)
 npm run build        # Build para produção
 npm run lint         # Verificação de código
 npm run preview      # Preview do build
@@ -236,3 +237,26 @@ Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes
 **Status**: ✅ Homepage + Fluxo Completo de Doações + Sistema para Necessitados  
 **Última atualização**: Agosto 2025  
 **Repositório**: https://github.com/danielzukowskipaixao/ADRA-sonnet
+
+## 🔐 Admin (novo)
+
+Para acessar o painel administrativo:
+
+1) Execute o backend:
+
+```powershell
+$env:ADMIN_PASSWORD="daniel"; $env:ADMIN_SESSION_SECRET="dev-secret"; npm run dev:server
+```
+
+2) Rode o frontend em outro terminal:
+
+```powershell
+npm run dev
+```
+
+3) Entre na Home e clique em “Entrar como administrador” no final da página. Informe a senha solicitada. Em caso de sucesso, você será redirecionado para `/admin`.
+
+Notas:
+- Em desenvolvimento, o frontend usa proxy do Vite para `/api` → `http://localhost:3000`.
+- Se a porta 3000 estiver ocupada, inicie o backend com `PORT=3001` e ajuste o proxy no `vite.config.js` temporariamente.
+- A senha padrão agora é `daniel` e pode ser alterada com a variável `ADMIN_PASSWORD`.

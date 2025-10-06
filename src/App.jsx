@@ -8,6 +8,7 @@ import DecisorNecessitado from './pages/DecisorNecessitado';
 import LoginCadastro from './pages/LoginCadastro';
 import PaginaEsperaValidacao from './pages/PaginaEsperaValidacao';
 import PaginaPedidoDoacao from './pages/PaginaPedidoDoacao';
+import AdminDashboard from './pages/AdminDashboard';
 
 // Novas páginas do sistema de doações
 import DonorHub from './pages/DonorHub';
@@ -15,14 +16,18 @@ import DoarTransferencia from './pages/DoarTransferencia';
 import DoarItens from './pages/DoarItens';
 import MapaUnidades from './pages/MapaUnidades';
 import ComoFunciona from './pages/ComoFunciona';
+import BackButton from './components/BackButton';
 
 function App() {
   return (
     <Router>
       <ScrollToTop />
+      {/* Global back button on all non-home routes */}
+      <BackButton />
       <Routes>
         {/* Rotas já existentes */}
         <Route path="/" element={<Home />} />
+        <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/doar" element={<DonorHub />} />
         <Route path="/preciso-de-ajuda" element={<DecisorNecessitado />} />
         <Route path="/login-cadastro" element={<LoginCadastro />} />
