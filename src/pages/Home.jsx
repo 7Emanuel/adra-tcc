@@ -10,7 +10,8 @@ import StepCard from '../components/StepCard';
 const Home = () => {
   const navigate = useNavigate();
   const [isDoarModalOpen, setIsDoarModalOpen] = useState(false);
-  const [adminOpen, setAdminOpen] = useState(false);
+  const [infoModal, setInfoModal] = useState({ open: false, title: '', paragraphs: [], icon: null });
+  
 
   // Navegar para o hub de doações em vez de abrir modal
   const handleDoarClick = () => navigate('/doar');
@@ -58,11 +59,12 @@ const Home = () => {
 
               {/* Image/Illustration */}
               <div className="flex-1 flex justify-center">
-                <div className="w-full max-w-md h-96 bg-gradient-to-br from-green-600 to-green-500 rounded-3xl flex items-center justify-center shadow-2xl">
-                  <svg className="w-32 h-32 text-white opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                </div>
+                <img
+                  src="/hero-illustration.svg"
+                  alt="Solidariedade e impacto com a ADRA"
+                  className="w-full max-w-2xl h-auto rounded-3xl shadow-2xl ring-1 ring-black/5"
+                  loading="eager"
+                />
               </div>
             </div>
           </div>
@@ -89,6 +91,17 @@ const Home = () => {
                     step="1"
                     title="Escolha como doar"
                     description="Escolha o tipo de doação (itens ou transferência)."
+                    onClick={() => setInfoModal({
+                      open: true,
+                      title: 'Escolha como doar',
+                      paragraphs: [
+                        'Você pode contribuir com itens essenciais ou via transferência. Cada modalidade ajuda a suprir necessidades imediatas.',
+                        'Nossa equipe orienta a melhor forma de entrega para garantir segurança e eficiência.'
+                      ],
+                      icon: (
+                        <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"/></svg>
+                      )
+                    })}
                     icon={
                       <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
@@ -99,6 +112,17 @@ const Home = () => {
                     step="2"
                     title="Combine a entrega"
                     description="Combine a melhor forma de entrega."
+                    onClick={() => setInfoModal({
+                      open: true,
+                      title: 'Combine a entrega',
+                      paragraphs: [
+                        'Agendamos a melhor forma de entrega: retirada, ponto de coleta ou envio.',
+                        'Priorizamos rotas eficientes e seguras para acelerar a chegada da sua doação.'
+                      ],
+                      icon: (
+                        <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                      )
+                    })}
                     icon={
                       <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -110,6 +134,17 @@ const Home = () => {
                     step="3"
                     title="Acompanhe o impacto"
                     description="Acompanhe o impacto da sua ajuda."
+                    onClick={() => setInfoModal({
+                      open: true,
+                      title: 'Acompanhe o impacto',
+                      paragraphs: [
+                        'Você receberá atualizações do andamento até a destinação final.',
+                        'Transparência em cada etapa para você ver o impacto real da sua contribuição.'
+                      ],
+                      icon: (
+                        <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                      )
+                    })}
                     icon={
                       <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -129,6 +164,17 @@ const Home = () => {
                     step="1"
                     title="Informe suas necessidades"
                     description="Informe suas necessidades com clareza."
+                    onClick={() => setInfoModal({
+                      open: true,
+                      title: 'Informe suas necessidades',
+                      paragraphs: [
+                        'Liste com clareza os itens e a quantidade que sua família precisa.',
+                        'Quanto mais detalhado, mais fácil conectar sua necessidade a um doador compatível.'
+                      ],
+                      icon: (
+                        <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                      )
+                    })}
                     icon={
                       <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -139,6 +185,17 @@ const Home = () => {
                     step="2"
                     title="Compartilhe seu endereço"
                     description="Compartilhe seu endereço para visita da equipe."
+                    onClick={() => setInfoModal({
+                      open: true,
+                      title: 'Compartilhe seu endereço',
+                      paragraphs: [
+                        'Com sua autorização, usamos o endereço para localizar a unidade mais próxima e planejar a visita.',
+                        'Se preferir, você pode indicar um ponto de encontro seguro.'
+                      ],
+                      icon: (
+                        <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                      )
+                    })}
                     icon={
                       <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -149,6 +206,17 @@ const Home = () => {
                     step="3"
                     title="Aguarde validação"
                     description="Aguarde validação e receba acompanhamento."
+                    onClick={() => setInfoModal({
+                      open: true,
+                      title: 'Aguarde validação',
+                      paragraphs: [
+                        'Nossa equipe valida os dados rapidamente para liberar o atendimento.',
+                        'Caso haja alguma pendência, entraremos em contato com orientações.'
+                      ],
+                      icon: (
+                        <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                      )
+                    })}
                     icon={
                       <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -183,6 +251,14 @@ const Home = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 }
+                onClick={() => setInfoModal({
+                  open: true,
+                  title: 'Segurança Alimentar',
+                  paragraphs: [
+                    'Garantimos acesso a alimentos nutritivos com logística organizada e apoio a redes locais.',
+                    'Parcerias sustentáveis promovem autonomia e segurança alimentar de famílias atendidas.'
+                  ]
+                })}
               />
               
               <FeatureCard
@@ -196,6 +272,14 @@ const Home = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 }
+                onClick={() => setInfoModal({
+                  open: true,
+                  title: 'Assistência Emergencial',
+                  paragraphs: [
+                    'Resposta rápida com itens essenciais, abrigo e orientação em crises.',
+                    'Integração com autoridades e voluntários potencializa a ajuda humanitária.'
+                  ]
+                })}
               />
               
               <FeatureCard
@@ -209,6 +293,14 @@ const Home = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                   </svg>
                 }
+                onClick={() => setInfoModal({
+                  open: true,
+                  title: 'Educação & Capacitação',
+                  paragraphs: [
+                    'Formação técnica e cidadã que abre portas para o mercado de trabalho.',
+                    'Workshops e parcerias ampliam oportunidades e fortalecem trajetórias.'
+                  ]
+                })}
               />
               
               <FeatureCard
@@ -222,6 +314,14 @@ const Home = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                   </svg>
                 }
+                onClick={() => setInfoModal({
+                  open: true,
+                  title: 'Saúde & Higiene',
+                  paragraphs: [
+                    'Campanhas preventivas e distribuição de itens essenciais à saúde.',
+                    'Atendimento básico em parceria com profissionais e redes comunitárias.'
+                  ]
+                })}
               />
               
               <FeatureCard
@@ -235,6 +335,14 @@ const Home = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 }
+                onClick={() => setInfoModal({
+                  open: true,
+                  title: 'Geração de Renda',
+                  paragraphs: [
+                    'Apoio a pequenos negócios, microcrédito e mentorias para autonomia financeira.',
+                    'Fortalecimento da economia local com foco em inclusão e sustentabilidade.'
+                  ]
+                })}
               />
               
               <FeatureCard
@@ -248,6 +356,14 @@ const Home = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
                 }
+                onClick={() => setInfoModal({
+                  open: true,
+                  title: 'Comunidade & Voluntariado',
+                  paragraphs: [
+                    'Mobilização de voluntários e redes de apoio para ações contínuas.',
+                    'Projetos comunitários fortalecem laços e promovem dignidade coletiva.'
+                  ]
+                })}
               />
             </div>
           </div>
@@ -403,6 +519,29 @@ const Home = () => {
             <p className="text-sm text-green-800 font-medium">
               🎯 Pronto para fazer a diferença? Clique em "Começar Doação" para iniciar!
             </p>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Info Modal (steps / areas) */}
+      <Modal
+        isOpen={infoModal.open}
+        onClose={() => setInfoModal({ open: false, title: '', paragraphs: [], icon: null })}
+        title={infoModal.title}
+        primaryAction={{ label: 'Fechar', onClick: () => setInfoModal({ open: false, title: '', paragraphs: [], icon: null }) }}
+      >
+        <div className="flex items-start gap-3">
+          {infoModal.icon && (
+            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              {infoModal.icon}
+            </div>
+          )}
+          <div className="space-y-3">
+            {(infoModal.paragraphs || []).map((t, i) => (
+              <p key={i} className="text-sm text-gray-700">
+                {t}
+              </p>
+            ))}
           </div>
         </div>
       </Modal>

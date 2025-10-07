@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
 import { adminApi } from '../services/adminApi';
+import AdminLoginModal from '../components/AdminLoginModal';
+import Modal from '../components/Modal';
 
 const TabButton = ({ active, children, ...props }) => (
   <button
@@ -33,6 +35,10 @@ function usePagedFetcher(fetcher, initialParams) {
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [tab, setTab] = useState('beneficiaries');
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [detailItem, setDetailItem] = useState(null);
+  const [rejectItem, setRejectItem] = useState(null);
+  const [rejectReason, setRejectReason] = useState('');
 
   const beneficiaries = usePagedFetcher(
     (p) => adminApi.beneficiaries(p),
@@ -56,19 +62,31 @@ export default function AdminDashboard() {
   };
 
   const handleValidate = async (id, approved) => {
-    const reason = !approved ? window.prompt('Motivo da rejeição (opcional):') || '' : undefined;
-    await adminApi.validateBeneficiary(id, { approved, reason });
+    if (!approved) {
+      setRejectItem(id);
+      setRejectReason('');
+      return;
+    }
+    await adminApi.validateBeneficiary(id, { approved: true });
     beneficiaries.setParams({ ...beneficiaries.params });
   };
 
-  // Redirect home if backend says no session
+  // Prompt login if backend says no session (instead of redirecting away)
   useEffect(() => {
     const be = beneficiaries.error || '';
     const de = donations.error || '';
     if (/(Sem sessão|Sessão inválida)/i.test(be + ' ' + de)) {
-      navigate('/');
+      setShowAdminLogin(true);
     }
   }, [beneficiaries.error, donations.error]);
+
+  // If the admin API is down (proxy/500), show an empty-state message instead of raw error for beneficiaries
+  const beneErrorLooksLikeServerDown = /Erro\s*5\d\d|ECONNREFUSED|Failed to fetch|NetworkError|proxy/i.test(
+    beneficiaries.error || ''
+  );
+  const donaErrorLooksLikeServerDown = /Erro\s*5\d\d|ECONNREFUSED|Failed to fetch|NetworkError|proxy/i.test(
+    donations.error || ''
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -109,8 +127,10 @@ export default function AdminDashboard() {
         {tab === 'beneficiaries' ? (
           <SectionTable
             loading={beneficiaries.loading}
-            error={beneficiaries.error}
+            // Hide low-level 5xx/proxy errors and show a friendly empty state instead
+            error={beneErrorLooksLikeServerDown ? '' : beneficiaries.error}
             data={beneficiaries.data}
+            emptyMessage="Não há contas de necessitados ainda."
             onPrev={() => beneficiaries.setParams({ ...beneficiaries.params, page: Math.max(1, (beneficiaries.data.page||1) - 1) })}
             onNext={() => beneficiaries.setParams({ ...beneficiaries.params, page: Math.min(beneficiaries.data.pages||1, (beneficiaries.data.page||1) + 1) })}
             renderRow={(b) => (
@@ -123,7 +143,7 @@ export default function AdminDashboard() {
                 <td className="px-3 py-2 text-sm">{b.address?.city}/{b.address?.state}</td>
                 <td className="px-3 py-2 text-sm">{b.status}</td>
                 <td className="px-3 py-2 text-sm text-right">
-                  <Button size="sm" variant="secondary" onClick={() => alert('Detalhes em breve')}>Ver</Button>
+                  <Button size="sm" variant="secondary" onClick={() => setDetailItem({ type: 'beneficiary', data: b })}>Ver</Button>
                   <Button size="sm" className="ml-2" onClick={() => handleValidate(b.id, true)}>Validar</Button>
                   <Button size="sm" className="ml-2" variant="accent" onClick={() => handleValidate(b.id, false)}>Rejeitar</Button>
                 </td>
@@ -133,8 +153,9 @@ export default function AdminDashboard() {
         ) : (
           <SectionTable
             loading={donations.loading}
-            error={donations.error}
+            error={donaErrorLooksLikeServerDown ? '' : donations.error}
             data={donations.data}
+            emptyMessage="Ainda não há doadores."
             onPrev={() => donations.setParams({ ...donations.params, page: Math.max(1, (donations.data.page||1) - 1) })}
             onNext={() => donations.setParams({ ...donations.params, page: Math.min(donations.data.pages||1, (donations.data.page||1) + 1) })}
             renderRow={(d) => (
@@ -148,7 +169,7 @@ export default function AdminDashboard() {
                   {(d.items||[]).map(i=>i.name).join(', ')}
                 </td>
                 <td className="px-3 py-2 text-sm text-right">
-                  <Button size="sm" variant="secondary" onClick={() => alert('Detalhes em breve')}>Ver</Button>
+                  <Button size="sm" variant="secondary" onClick={() => setDetailItem({ type: 'donation', data: d })}>Ver</Button>
                   <Button size="sm" className="ml-2" onClick={() => adminApi.updateDonation(d.id, { status: 'scheduled' }).then(()=>donations.setParams({ ...donations.params }))}>Agendar</Button>
                 </td>
               </tr>
@@ -156,13 +177,97 @@ export default function AdminDashboard() {
           />
         )}
       </main>
+
+      {/* Admin login modal when session is missing/invalid */}
+      <AdminLoginModal
+        isOpen={showAdminLogin}
+        onClose={() => setShowAdminLogin(false)}
+        onSuccess={() => {
+          setShowAdminLogin(false);
+          // Trigger refetch by resetting params
+          beneficiaries.setParams({ ...beneficiaries.params });
+          donations.setParams({ ...donations.params });
+        }}
+      />
+
+      {/* Detail modal */}
+      <Modal
+        isOpen={!!detailItem}
+        onClose={() => setDetailItem(null)}
+        title={detailItem?.type === 'donation' ? 'Detalhes da Doação' : 'Detalhes do Beneficiário'}
+        primaryAction={{ label: 'Fechar', onClick: () => setDetailItem(null) }}
+      >
+        {detailItem && (
+          <div className="space-y-2 text-sm">
+            {detailItem.type === 'beneficiary' ? (
+              <>
+                <div><span className="text-gray-600">Nome: </span><span className="font-medium">{detailItem.data.name}</span></div>
+                <div><span className="text-gray-600">Documento: </span><span className="font-medium">{detailItem.data.document?.type} {detailItem.data.document?.value}</span></div>
+                <div><span className="text-gray-600">Email: </span><span className="font-medium">{detailItem.data.email}</span></div>
+                <div><span className="text-gray-600">Telefone: </span><span className="font-medium">{detailItem.data.phone}</span></div>
+                <div><span className="text-gray-600">Endereço: </span><span className="font-medium">{detailItem.data.address?.city}/{detailItem.data.address?.state}</span></div>
+                <div><span className="text-gray-600">Status: </span><span className="font-medium">{detailItem.data.status}</span></div>
+              </>
+            ) : (
+              <>
+                <div><span className="text-gray-600">Doador: </span><span className="font-medium">{detailItem.data.donor?.name}</span></div>
+                <div><span className="text-gray-600">Tipo: </span><span className="font-medium">{detailItem.data.type}</span></div>
+                <div><span className="text-gray-600">Cidade/UF: </span><span className="font-medium">{detailItem.data.address?.city}/{detailItem.data.address?.state}</span></div>
+                <div><span className="text-gray-600">Itens: </span><span className="font-medium">{(detailItem.data.items||[]).map(i=>`${i.name} x${i.qty}`).join('; ')}</span></div>
+                <div><span className="text-gray-600">Status: </span><span className="font-medium">{detailItem.data.status}</span></div>
+              </>
+            )}
+          </div>
+        )}
+      </Modal>
+
+      {/* Rejection reason modal */}
+      <Modal
+        isOpen={!!rejectItem}
+        onClose={() => setRejectItem(null)}
+        title="Rejeitar cadastro"
+        primaryAction={{
+          label: 'Rejeitar',
+          onClick: async () => {
+            const reason = (rejectReason || '').trim();
+            if (!reason) return; // botão ficará desabilitado
+            await adminApi.validateBeneficiary(rejectItem, { approved: false, reason });
+            setRejectItem(null);
+            setRejectReason('');
+            beneficiaries.setParams({ ...beneficiaries.params });
+          },
+          disabled: !(rejectReason || '').trim(),
+        }}
+        secondaryAction={{ label: 'Cancelar', onClick: () => setRejectItem(null) }}
+      >
+        <div className="space-y-2">
+          <p className="text-sm text-gray-700">Informe o motivo da rejeição. Esse texto será mostrado ao solicitante na página de espera.</p>
+          <textarea
+            className="w-full border rounded-lg p-2 text-sm"
+            rows={4}
+            value={rejectReason}
+            onChange={(e) => setRejectReason(e.target.value)}
+            placeholder="Escreva o motivo da rejeição..."
+          />
+        </div>
+      </Modal>
     </div>
   );
 }
 
-function SectionTable({ loading, error, data, renderRow, onPrev, onNext }) {
+function SectionTable({ loading, error, data, renderRow, onPrev, onNext, emptyMessage }) {
   if (loading) return <p className="text-gray-600">Carregando...</p>;
   if (error) return <p className="text-red-600">{error}</p>;
+  const isEmpty = !data || !Array.isArray(data.items) || data.items.length === 0;
+  if (isEmpty) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm border">
+        <div className="p-6 text-center text-gray-600">
+          {emptyMessage || 'Nenhum registro encontrado.'}
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="bg-white rounded-xl shadow-sm border">
       <div className="overflow-x-auto">

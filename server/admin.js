@@ -34,7 +34,7 @@ async function readJson(filePath) {
   try {
     const txt = await fs.readFile(filePath, 'utf-8');
     return JSON.parse(txt || '[]');
-  } catch (e) {
+  } catch {
     console.warn(`[admin] JSON inválido em ${filePath}. Resetando para []`);
     await fs.writeFile(filePath, '[]', 'utf-8');
     return [];
@@ -81,7 +81,7 @@ function requireAdmin(req, res, next) {
     if (decoded?.role !== 'admin') throw new Error('not admin');
     req.admin = { id: 'admin', role: 'admin' };
     return next();
-  } catch (e) {
+  } catch {
     return res.status(401).json({ error: 'Sessão inválida' });
   }
 }
@@ -138,17 +138,22 @@ router.use(requireAdmin);
 // Beneficiaries list
 router.get('/beneficiaries', async (req, res) => {
   const { status = 'pending', search = '', page = '1', pageSize = '20' } = req.query || {};
-  const all = await readJson(beneficiariesFile);
-  const filtered = all.filter(b => {
-    const st = (b.status || 'pending') === status;
-    if (!st) return false;
-    const q = String(search || '').toLowerCase();
-    if (!q) return true;
-    const hay = [b.id, b.name, b.email, b.phone, b.address?.city, b.address?.state, b.document?.value].map(x => (x || '').toLowerCase()).join(' ');
-    return hay.includes(q);
-  });
-  const result = paginate(filtered, page, pageSize);
-  res.json(result);
+  try {
+    const all = await readJson(beneficiariesFile);
+    const filtered = all.filter(b => {
+      const st = (b.status || 'pending') === status;
+      if (!st) return false;
+      const q = String(search || '').toLowerCase();
+      if (!q) return true;
+      const hay = [b.id, b.name, b.email, b.phone, b.address?.city, b.address?.state, b.document?.value].map(x => (x || '').toLowerCase()).join(' ');
+      return hay.includes(q);
+    });
+    const result = paginate(filtered, page, pageSize);
+    res.json(result);
+  } catch (e) {
+    console.error('[admin] Falha ao listar beneficiários, retornando vazio', e);
+    res.json(paginate([], page, pageSize));
+  }
 });
 
 router.get('/beneficiaries/:id', async (req, res) => {
@@ -161,6 +166,9 @@ router.get('/beneficiaries/:id', async (req, res) => {
 router.patch('/beneficiaries/:id/validate', async (req, res) => {
   const { approved, reason } = req.body || {};
   if (approved === undefined) return res.status(400).json({ error: 'Campo approved é obrigatório' });
+  if (approved === false && (!reason || !String(reason).trim())) {
+    return res.status(400).json({ error: 'Motivo é obrigatório para rejeição' });
+  }
   const all = await readJson(beneficiariesFile);
   const idx = all.findIndex(x => x.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: 'Não encontrado' });
@@ -182,17 +190,22 @@ router.patch('/beneficiaries/:id/validate', async (req, res) => {
 // Donations
 router.get('/donations', async (req, res) => {
   const { status = '', search = '', page = '1', pageSize = '20' } = req.query || {};
-  const all = await readJson(donationsFile);
-  const filtered = all.filter(d => {
-    const st = status ? d.status === status : true;
-    if (!st) return false;
-    const q = String(search || '').toLowerCase();
-    if (!q) return true;
-    const hay = [d.id, d.donor?.name, d.donor?.email, d.donor?.phone, d.address?.city, d.address?.state, d.type].map(x => (x || '').toLowerCase()).join(' ');
-    return hay.includes(q);
-  });
-  const result = paginate(filtered, page, pageSize);
-  res.json(result);
+  try {
+    const all = await readJson(donationsFile);
+    const filtered = all.filter(d => {
+      const st = status ? d.status === status : true;
+      if (!st) return false;
+      const q = String(search || '').toLowerCase();
+      if (!q) return true;
+      const hay = [d.id, d.donor?.name, d.donor?.email, d.donor?.phone, d.address?.city, d.address?.state, d.type].map(x => (x || '').toLowerCase()).join(' ');
+      return hay.includes(q);
+    });
+    const result = paginate(filtered, page, pageSize);
+    res.json(result);
+  } catch (e) {
+    console.error('[admin] Falha ao listar doações, retornando vazio', e);
+    res.json(paginate([], page, pageSize));
+  }
 });
 
 router.get('/donations/:id', async (req, res) => {

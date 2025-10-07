@@ -165,6 +165,21 @@ app.post('/api/beneficiaries', async (req, res) => {
   }
 });
 
+// Public endpoint: check beneficiary status by email (to inform users on waiting page)
+app.get('/api/beneficiaries/status', async (req, res) => {
+  try {
+    const email = String(req.query.email || '').trim().toLowerCase();
+    if (!email) return res.status(400).json({ error: 'Parâmetro email é obrigatório' });
+    const all = await readBeneficiaries();
+    const b = all.find(x => (x.email || '').toLowerCase() === email);
+    if (!b) return res.json({ exists: false, status: 'unknown' });
+    return res.json({ exists: true, status: b.status || 'pending', reason: b.notes || '' });
+  } catch (e) {
+    console.error('Erro em /api/beneficiaries/status', e);
+    res.status(500).json({ error: 'Erro ao consultar status' });
+  }
+});
+
 // List users (temporário demo)
 app.get('/users', async (_req, res) => {
   const users = await prisma.user.findMany({ orderBy: { id: 'asc' } });

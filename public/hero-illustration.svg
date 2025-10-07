@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Ilustração de solidariedade e impacto</title>
+  <desc id="desc">Formas orgânicas com cores em tons de verde e ícones representando ajuda, comunidade e esperança.</desc>
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#12B886"/>
+      <stop offset="100%" stop-color="#0F8B59"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E6FFF5"/>
+      <stop offset="100%" stop-color="#F3FFF9"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0F8B59" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="600" fill="url(#g2)"/>
+
+  <!-- Organic shapes -->
+  <path d="M-40,520 C120,440 220,640 420,540 C600,456 700,560 860,480 L860,640 L-40,640 Z" fill="#E6FBF3"/>
+  <path d="M-40,460 C120,380 240,560 430,480 C640,390 700,520 860,430 L860,640 L-40,640 Z" fill="#D6F7EC"/>
+
+  <!-- Main card -->
+  <g filter="url(#shadow)">
+    <rect x="120" y="100" rx="24" ry="24" width="560" height="360" fill="white"/>
+  </g>
+  
+  <!-- Left illustration: hands/heart -->
+  <g transform="translate(170,150)">
+    <circle cx="100" cy="100" r="92" fill="url(#g1)" opacity="0.12"/>
+    <circle cx="100" cy="100" r="72" fill="#F0FFF8"/>
+    <!-- hands -->
+    <path d="M84 130c-12 0-22-9.6-22-21.4V95c0-5.5 4.5-10 10-10h10c2.2 0 4 1.8 4 4v7c0 2.2 1.8 4 4 4h6c2.2 0 4 1.8 4 4v5.6c0 11.8-10 21.4-22 21.4Z" fill="#12B886"/>
+    <path d="M116 130c12 0 22-9.6 22-21.4V95c0-5.5-4.5-10-10-10h-10c-2.2 0-4 1.8-4 4v7c0 2.2-1.8 4-4 4h-6c-2.2 0-4 1.8-4 4v5.6c0 11.8 10 21.4 22 21.4Z" fill="#0F8B59"/>
+    <!-- heart -->
+    <path d="M100 116c-10.5-7.6-17-13.7-17-22.3 0-6 4.8-10.7 10.7-10.7 3.9 0 7.3 2 9.3 5 2-3 5.4-5 9.3-5 5.9 0 10.7 4.7 10.7 10.7 0 8.6-6.5 14.7-17 22.3Z" fill="#FF6B6B"/>
+  </g>
+
+  <!-- Right column: bullets/icons -->
+  <g transform="translate(370,150)">
+    <text x="0" y="8" fill="#0B3D2E" font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto" font-size="24" font-weight="700">Juntos, transformamos realidades</text>
+    <g transform="translate(0,40)">
+      <g>
+        <rect x="0" y="0" width="360" height="64" rx="12" fill="#F6FFFB"/>
+        <circle cx="32" cy="32" r="12" fill="#12B886"/>
+        <path d="M28 32l3 3 6-6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="54" y="37" fill="#093426" font-family="Inter, system-ui" font-size="16" font-weight="600">Segurança e transparência</text>
+      </g>
+      <g transform="translate(0,84)">
+        <rect x="0" y="0" width="360" height="64" rx="12" fill="#F6FFFB"/>
+        <circle cx="32" cy="32" r="12" fill="#12B886"/>
+        <path d="M28 32l3 3 6-6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="54" y="37" fill="#093426" font-family="Inter, system-ui" font-size="16" font-weight="600">Conexão entre doadores e famílias</text>
+      </g>
+      <g transform="translate(0,168)">
+        <rect x="0" y="0" width="360" height="64" rx="12" fill="#F6FFFB"/>
+        <circle cx="32" cy="32" r="12" fill="#12B886"/>
+        <path d="M28 32l3 3 6-6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="54" y="37" fill="#093426" font-family="Inter, system-ui" font-size="16" font-weight="600">Impacto direto na comunidade</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Decorative leaves -->
+  <g opacity="0.18">
+    <path d="M730 110c-20 0-40 10-56 30 16 20 36 30 56 30s40-10 56-30c-16-20-36-30-56-30Z" fill="#12B886"/>
+    <path d="M70 210c-18 0-36 8-50 24 14 16 32 24 50 24s36-8 50-24c-14-16-32-24-50-24Z" fill="#0F8B59"/>
+  </g>
+</svg>

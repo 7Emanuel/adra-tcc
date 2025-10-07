@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Footer from '../components/Footer';
 import Button from '../components/Button';
+import Modal from '../components/Modal';
  
 
 export default function ComoFunciona() {
+  const [infoModal, setInfoModal] = useState({ open: false, title: '', paragraphs: [], icon: null });
   const passosDoacaoTransferencia = [
     {
       numero: 1,
@@ -132,7 +134,19 @@ export default function ComoFunciona() {
             
             <div className="grid md:grid-cols-4 gap-8">
               {passosDoacaoTransferencia.map((passo, index) => (
-                <div key={index} className="text-center">
+                <div
+                  key={index}
+                  className="text-center cursor-pointer focus:outline-none focus:ring-4 focus:ring-green-200 rounded-lg p-2"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setInfoModal({
+                    open: true,
+                    title: passo.titulo,
+                    paragraphs: [passo.descricao, 'Transparência em cada etapa para você acompanhar o impacto.'],
+                    icon: null
+                  })}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); setInfoModal({ open: true, title: passo.titulo, paragraphs: [passo.descricao, 'Transparência em cada etapa para você acompanhar o impacto.'], icon: null }); } }}
+                >
                   <div className="relative mb-6">
                     <div className="w-20 h-20 bg-white border-4 border-green-500 rounded-full flex items-center justify-center mx-auto text-3xl">
                       {passo.icone}
@@ -159,7 +173,19 @@ export default function ComoFunciona() {
             
             <div className="grid md:grid-cols-4 gap-8">
               {passosItens.map((passo, index) => (
-                <div key={index} className="text-center">
+                <div
+                  key={index}
+                  className="text-center cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-200 rounded-lg p-2"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setInfoModal({
+                    open: true,
+                    title: passo.titulo,
+                    paragraphs: [passo.descricao, 'Nossa equipe orienta sobre itens aceitos e logística de entrega/coleta.'],
+                    icon: null
+                  })}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); setInfoModal({ open: true, title: passo.titulo, paragraphs: [passo.descricao, 'Nossa equipe orienta sobre itens aceitos e logística de entrega/coleta.'], icon: null }); } }}
+                >
                   <div className="relative mb-6">
                     <div className="w-20 h-20 bg-white border-4 border-blue-500 rounded-full flex items-center justify-center mx-auto text-3xl">
                       {passo.icone}
@@ -326,6 +352,20 @@ export default function ComoFunciona() {
       </main>
 
       <Footer />
+
+      {/* Info Modal */}
+      <Modal
+        isOpen={infoModal.open}
+        onClose={() => setInfoModal({ open: false, title: '', paragraphs: [], icon: null })}
+        title={infoModal.title}
+        primaryAction={{ label: 'Fechar', onClick: () => setInfoModal({ open: false, title: '', paragraphs: [], icon: null }) }}
+      >
+        <div className="space-y-3">
+          {(infoModal.paragraphs || []).map((t, i) => (
+            <p key={i} className="text-sm text-gray-700">{t}</p>
+          ))}
+        </div>
+      </Modal>
     </div>
   );
 }

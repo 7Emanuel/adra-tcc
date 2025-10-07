@@ -3,15 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import { AuthService } from '../services/AuthService';
 import Button from '../components/Button';
 import InfoBanner from '../components/necessitado/InfoBanner';
+import { api } from '../services/apiClient';
 
 const PaginaEsperaValidacao = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [checking, setChecking] = useState(true);
+  const [rejectionReason, setRejectionReason] = useState('');
 
   useEffect(() => {
     // Verifica se usuário está logado e com status correto
-    const checkUserAccess = () => {
+    const checkUserAccess = async () => {
       const isLoggedIn = AuthService.isLoggedIn();
       
       if (!isLoggedIn) {
@@ -21,17 +23,23 @@ const PaginaEsperaValidacao = () => {
       
       const currentUser = AuthService.getUser();
       setUser(currentUser);
-      // TODO: Integrar com banco de dados para verificar status do usuário
-      // status: "pending" | "approved" | "rejected"
-      // Quando integrar:
-      // - pending -> manter nesta tela
-      // - approved -> navigate('/pedir-doacao', { replace: true })
-      // - rejected -> exibir mensagem de reprovação e orientações
-
-      // Fluxo atual MOCK: se marcado como aprovado manualmente no localStorage, segue
-      if (currentUser.verificationStatus === 'approved' || currentUser.isVerified === true) {
-        navigate('/pedir-doacao', { replace: true });
-        return;
+      try {
+        // Consulta status do beneficiário no backend (file-based)
+        const res = await api(`/api/beneficiaries/status?email=${encodeURIComponent(currentUser.email || '')}`);
+        if (res.exists) {
+          if (res.status === 'validated' || res.status === 'approved') {
+            navigate('/pedir-doacao', { replace: true });
+            return;
+          }
+          if (res.status === 'rejected') {
+            setRejectionReason(res.reason || '');
+          }
+        } else {
+          // Mantém em análise caso não exista ainda
+        }
+      } catch (e) {
+        // Em caso de falha, mantém fluxo atual
+        console.warn('Falha ao consultar status do beneficiário', e);
       }
       setChecking(false);
     };
@@ -39,7 +47,7 @@ const PaginaEsperaValidacao = () => {
     checkUserAccess();
   }, [navigate]);
 
-  if (!user) {
+  if (!user || checking) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -115,18 +123,34 @@ const PaginaEsperaValidacao = () => {
             </p>
           </InfoBanner>
 
-          {/* Status Block */}
-          <div className="bg-white rounded-2xl p-8 shadow-sm text-center">
-            <div className="flex items-center justify-center mb-4">
-              <div className="w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full animate-spin" aria-hidden="true"></div>
+          {/* Status Block / Rejection Reason */}
+          {rejectionReason ? (
+            <div className="bg-white rounded-2xl p-8 shadow-sm">
+              <h2 className="text-lg font-semibold text-red-700 mb-2">Sua conta foi rejeitada</h2>
+              <p className="text-sm text-gray-700 mb-4">
+                Motivo: {rejectionReason}
+              </p>
+              <div className="text-sm text-gray-600 mb-6">
+                Por favor, revise suas informações e tente novamente.
+              </div>
+              <div className="flex gap-3">
+                <Button variant="secondary" onClick={() => navigate('/preciso-de-ajuda')}>Voltar</Button>
+                <Button variant="primary" onClick={() => navigate('/preciso-de-ajuda')}>Atualizar cadastro</Button>
+              </div>
             </div>
-            <p className="text-gray-700 mb-4">
-              Aguardando validação da equipe da ADRA...
-            </p>
-            <Button variant="primary" size="lg" disabled className="w-full opacity-70 cursor-not-allowed">
-              Aguardando validação da equipe da ADRA...
-            </Button>
-          </div>
+          ) : (
+            <div className="bg-white rounded-2xl p-8 shadow-sm text-center">
+              <div className="flex items-center justify-center mb-4">
+                <div className="w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full animate-spin" aria-hidden="true"></div>
+              </div>
+              <p className="text-gray-700 mb-4">
+                Aguardando validação da equipe da ADRA...
+              </p>
+              <Button variant="primary" size="lg" disabled className="w-full opacity-70 cursor-not-allowed">
+                Aguardando validação da equipe da ADRA...
+              </Button>
+            </div>
+          )}
 
           {/* Help Section */}
           <div className="mt-8 text-center space-y-4">

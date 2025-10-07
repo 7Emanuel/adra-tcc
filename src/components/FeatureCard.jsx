@@ -1,8 +1,20 @@
 import React from 'react';
 
-const FeatureCard = ({ icon, title, description, className = '' }) => {
+const FeatureCard = ({ icon, title, description, className = '', onClick }) => {
   return (
-    <div className={`bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-200 hover:-translate-y-1 ${className}`}>
+    <div
+      className={`bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-200 hover:-translate-y-1 ${onClick ? 'cursor-pointer focus:outline-none focus:ring-4 focus:ring-green-200' : ''} ${className}`}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onClick={onClick}
+      onKeyDown={(e) => {
+        if (!onClick) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+    >
       {/* Icon */}
       <div className="mb-4">
         <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">

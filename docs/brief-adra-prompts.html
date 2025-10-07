@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Briefing ADRA — Página Inicial e Painel Administrativo</title>
+  <style>
+    :root {
+      --adra-green: #0A6159;
+      --adra-green-light: #2AB3A3;
+      --adra-accent: #F5B700;
+      --adra-text: #1F2937;
+      --adra-muted: #475569;
+      --bg: #F4F6F8;
+      --white: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; color: var(--adra-text); background: var(--bg); }
+    .container { max-width: 980px; margin: 0 auto; padding: 32px 20px 80px; }
+    header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+    header .logo { width: 56px; height: 56px; background: var(--adra-green); border-radius: 12px; display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 24px; }
+    h1 { margin: 0; font-size: 28px; line-height: 1.2; color: var(--adra-green); }
+    .card { background: var(--white); border: 1px solid #e5e7eb; border-radius: 16px; box-shadow: 0 6px 18px rgba(10, 97, 89, 0.08); overflow: hidden; }
+    .section { padding: 24px; }
+    .section + .section { border-top: 1px dashed #e5e7eb; }
+    h2 { margin: 0 0 12px; font-size: 20px; color: var(--adra-green); }
+    h3 { margin: 20px 0 8px; font-size: 16px; color: var(--adra-text); }
+    p { margin: 8px 0; color: var(--adra-muted); }
+    ul { margin: 8px 0 8px 20px; color: var(--adra-muted); }
+    .badge { display: inline-block; background: #e8faf7; color: var(--adra-green); padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: .02em; }
+    .muted { color: var(--adra-muted); }
+    .footer { margin-top: 18px; font-size: 12px; color: var(--adra-muted); text-align: center; }
+    .title-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+    @media print {
+      body { background: #fff; }
+      .container { padding: 0 0 12mm; }
+      header { margin: 0 0 10mm; }
+      .card { box-shadow: none; border: 1px solid #ddd; }
+      .section { padding: 12mm; }
+      .section + .section { border-top: 1px dashed #ddd; }
+      h1 { font-size: 22pt; }
+      h2 { font-size: 14pt; }
+      h3 { font-size: 12pt; }
+      .page-break { page-break-before: always; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">A</div>
+      <div>
+        <div class="badge">Briefing ADRA</div>
+        <h1>Página Inicial e Painel Administrativo — Ajustes e Funcionalidades</h1>
+        <p class="muted">Documento consolidado com os requisitos atualizados para o desenvolvedor (Copilot/ClaudioSonic4).</p>
+      </div>
+    </header>
+
+    <div class="card">
+      <div class="section">
+        <div class="title-row">
+          <h2>Prompt 1 — Ajustes na Página Inicial (ADRA Brasil)</h2>
+        </div>
+        <h3>1. Paleta de cores</h3>
+        <ul>
+          <li>Aplicar as cores oficiais da ADRA Brasil: Verde ADRA (principal), Branco e tons neutros (secundários), Amarelo ouro (destaques).</li>
+        </ul>
+
+        <h3>2. Imagens ilustrativas</h3>
+        <ul>
+          <li>Substituir imagens genéricas por imagens reais/vetoriais sobre solidariedade, voluntariado, crianças e famílias, ações reais da ADRA.</li>
+        </ul>
+
+        <h3>3. Estrutura e conteúdo</h3>
+        <ul>
+          <li>Manter toda a estrutura atual, sem alterar rotas.</li>
+          <li>Adicionar, no rodapé, missão, visão, valores; redes sociais oficiais; breve descrição do impacto social da ADRA.</li>
+        </ul>
+
+        <h3>4. Interatividade</h3>
+        <ul>
+          <li>Na seção “Como funciona”, cada etapa abre um modal explicativo (título, 1–2 parágrafos, ícone/imagem).</li>
+          <li>Nas “Áreas de atuação”, cada item abre modal com ao menos 2 parágrafos sobre a atuação da ADRA.</li>
+        </ul>
+
+        <h3>5. Estilo e animações</h3>
+        <ul>
+          <li>Animações suaves (Framer Motion ou CSS) na entrada e rolagem.</li>
+          <li>Layout responsivo (mobile-first).</li>
+          <li>Glassmorphism leve ou sombras suaves para um visual moderno.</li>
+        </ul>
+
+        <h3>6. Estrutura final</h3>
+        <ul>
+          <li>Imagem de fundo sem cortes/distorções; contraste e hierarquia visual; botões/ícones consistentes.</li>
+        </ul>
+      </div>
+
+      <div class="section page-break">
+        <div class="title-row">
+          <h2>Prompt 2 — Ajustes e Funcionalidades no Painel Administrativo</h2>
+        </div>
+        <h3>1. Exibição de dados reais</h3>
+        <ul>
+          <li>Remover exemplos fixos; exibir apenas contas reais pendentes de validação/rejeição.</li>
+          <li>Se não houver pendências: “Nenhuma conta ou coleta/entrega pendente no momento.”</li>
+        </ul>
+
+        <h3>2. Botões de ação</h3>
+        <ul>
+          <li>Manter “Validar”, “Rejeitar”, “Ver”.</li>
+          <li>“Ver” abre modal com dados completos e organizados (nome, endereço, contato, itens, data, status).</li>
+        </ul>
+
+        <h3>3. Motivo da rejeição</h3>
+        <ul>
+          <li>“Rejeitar” exige motivo (campo obrigatório). O motivo é exibido para o necessitado na página de espera.</li>
+          <li>Mensagem: “Sua conta foi rejeitada. Motivo: [texto]. Por favor, revise suas informações e tente novamente.”</li>
+        </ul>
+
+        <h3>4. Seção de coletas e entregas</h3>
+        <ul>
+          <li>“Ver” abre modal com detalhes da coleta (doador, local, itens, status).</li>
+          <li>Aprovar/recusar coletas com possibilidade de justificar a recusa.</li>
+        </ul>
+
+        <h3>5. Layout e UX</h3>
+        <ul>
+          <li>Visual limpo, responsivo, com identidade ADRA; ícones e modais consistentes; animações suaves.</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="footer">ADRA — Documento de requisitos. Gerado em 07/10/2025.</p>
+  </div>
+</body>
+</html>

@@ -2,23 +2,76 @@
   {
     "id": "B1001",
     "name": "Maria da Silva",
-    "document": { "type": "CPF", "value": "123.456.789-00" },
+    "document": {
+      "type": "CPF",
+      "value": "123.456.789-00"
+    },
     "email": "maria@example.com",
     "phone": "+55 11 98765-4321",
-    "address": { "street": "Rua A", "number": "123", "district": "Centro", "city": "São Paulo", "state": "SP", "zip": "01000-000", "geo": { "lat": -23.55, "lng": -46.63 } },
+    "address": {
+      "street": "Rua A",
+      "number": "123",
+      "district": "Centro",
+      "city": "São Paulo",
+      "state": "SP",
+      "zip": "01000-000",
+      "geo": {
+        "lat": -23.55,
+        "lng": -46.63
+      }
+    },
     "createdAt": "2025-10-01T10:00:00.000Z",
-    "status": "pending",
-    "attachments": [ { "id": "att1", "name": "RG.pdf", "url": "/files/rg.pdf", "type": "application/pdf" } ],
-    "history": []
+    "status": "rejected",
+    "attachments": [
+      {
+        "id": "att1",
+        "name": "RG.pdf",
+        "url": "/files/rg.pdf",
+        "type": "application/pdf"
+      }
+    ],
+    "history": [
+      {
+        "at": "2025-10-07T19:55:27.876Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-07T19:58:02.697Z",
+        "by": "admin",
+        "action": "rejected",
+        "details": ""
+      }
+    ]
   },
   {
     "id": "B1002",
     "name": "João Pereira",
-    "document": { "type": "CPF", "value": "987.654.321-00" },
+    "document": {
+      "type": "CPF",
+      "value": "987.654.321-00"
+    },
     "email": "joao@example.com",
     "phone": "+55 21 91234-0000",
-    "address": { "street": "Av. Brasil", "number": "500", "district": "Copacabana", "city": "Rio de Janeiro", "state": "RJ", "zip": "22000-000" },
+    "address": {
+      "street": "Av. Brasil",
+      "number": "500",
+      "district": "Copacabana",
+      "city": "Rio de Janeiro",
+      "state": "RJ",
+      "zip": "22000-000"
+    },
     "createdAt": "2025-10-02T12:30:00.000Z",
-    "status": "pending"
+    "status": "rejected",
+    "notes": "teste ",
+    "history": [
+      {
+        "at": "2025-10-07T19:55:25.667Z",
+        "by": "admin",
+        "action": "rejected",
+        "details": "teste "
+      }
+    ]
   }
 ]

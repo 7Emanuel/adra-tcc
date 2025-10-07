@@ -1,8 +1,20 @@
 import React from 'react';
 
-const StepCard = ({ step, icon, title, description, className = '' }) => {
+const StepCard = ({ step, icon, title, description, className = '', onClick }) => {
   return (
-    <div className={`relative bg-white rounded-2xl p-6 shadow-md hover:shadow-lg transition-all duration-200 ${className}`}>
+    <div
+      className={`relative bg-white rounded-2xl p-6 shadow-md hover:shadow-lg transition-all duration-200 ${onClick ? 'cursor-pointer focus:outline-none focus:ring-4 focus:ring-green-200' : ''} ${className}`}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onClick={onClick}
+      onKeyDown={(e) => {
+        if (!onClick) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+    >
       {/* Step Number */}
       <div className="absolute -top-3 -left-3 w-8 h-8 bg-green-600 rounded-full flex items-center justify-center shadow-lg">
         <span className="text-white font-bold text-sm">{step}</span>
