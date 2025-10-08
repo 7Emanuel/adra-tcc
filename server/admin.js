@@ -3,6 +3,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import emailService from './services/emailService.js';
 
 // Load environment variables early to ensure ADMIN_PASSWORD and secrets are available
 dotenv.config();
@@ -172,8 +173,11 @@ router.patch('/beneficiaries/:id/validate', async (req, res) => {
   const all = await readJson(beneficiariesFile);
   const idx = all.findIndex(x => x.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: 'Não encontrado' });
+  
+  const beneficiary = all[idx];
   const status = approved ? 'validated' : 'rejected';
   const now = new Date().toISOString();
+  
   all[idx] = {
     ...all[idx],
     status,
@@ -183,7 +187,21 @@ router.patch('/beneficiaries/:id/validate', async (req, res) => {
       { at: now, by: 'admin', action: approved ? 'validated' : 'rejected', details: reason || '' }
     ]
   };
+  
   await writeJson(beneficiariesFile, all);
+  
+  // Enviar email para o beneficiário notificando sobre a decisão
+  try {
+    await emailService.sendBeneficiaryStatusUpdate(
+      beneficiary.email,
+      approved,
+      reason || ''
+    );
+  } catch (emailError) {
+    console.warn('⚠️ Falha ao enviar email de atualização para beneficiário:', emailError.message);
+    // Não bloqueia a operação se o email falhar
+  }
+  
   res.json({ ok: true });
 });
 

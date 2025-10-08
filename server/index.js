@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import { initDb, prisma } from './db.js';
 import adminRouter from './admin.js';
 import { registerUser, loginUser, getUserFromToken } from './auth.js';
+import emailService from './services/emailService.js';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -152,12 +153,25 @@ app.post('/api/beneficiaries', async (req, res) => {
       ]
     };
 
+    const isNewBeneficiary = byEmailIdx < 0;
+    
     if (byEmailIdx >= 0) {
       all[byEmailIdx] = { ...all[byEmailIdx], ...record };
     } else {
       all.push(record);
     }
     await writeBeneficiaries(all);
+    
+    // Enviar notificação por email para administradores (apenas para novos cadastros)
+    if (isNewBeneficiary) {
+      try {
+        await emailService.sendNewBeneficiaryNotification(record);
+      } catch (emailError) {
+        console.warn('⚠️ Falha ao enviar email de notificação:', emailError.message);
+        // Não bloqueia o cadastro se o email falhar
+      }
+    }
+    
     return res.status(201).json({ ok: true, id });
   } catch (e) {
     console.error('Erro ao registrar beneficiário (arquivo)', e);
