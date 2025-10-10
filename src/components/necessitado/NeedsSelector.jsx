@@ -5,6 +5,7 @@ import Button from '../Button';
 const NeedsSelector = ({ onItemsSelected, selectedItems = [] }) => {
   const [activeCategory, setActiveCategory] = useState('');
   const [localSelectedItems, setLocalSelectedItems] = useState(selectedItems);
+  const [medicationDetails, setMedicationDetails] = useState({});
 
   // Catálogo de necessidades organizadas por categoria
   const needsCatalog = {
@@ -57,6 +58,14 @@ const NeedsSelector = ({ onItemsSelected, selectedItems = [] }) => {
     const isSelected = localSelectedItems.find(selected => selected.id === item.id);
     if (isSelected) {
       setLocalSelectedItems(prev => prev.filter(selected => selected.id !== item.id));
+      // Limpar detalhes do medicamento se for removido
+      if (item.id === 'remedios-cronicos') {
+        setMedicationDetails(prev => {
+          const newDetails = { ...prev };
+          delete newDetails[item.id];
+          return newDetails;
+        });
+      }
     } else {
       setLocalSelectedItems(prev => [...prev, { ...item, quantity: 1 }]);
     }
@@ -70,8 +79,32 @@ const NeedsSelector = ({ onItemsSelected, selectedItems = [] }) => {
     );
   };
 
+  const handleMedicationDetailChange = (itemId, details) => {
+    setMedicationDetails(prev => ({
+      ...prev,
+      [itemId]: details
+    }));
+  };
+
   const handleConfirmSelection = () => {
-    onItemsSelected(localSelectedItems);
+    // Verificar se medicamentos de uso contínuo foram especificados
+    const hasContinuousMeds = localSelectedItems.find(item => item.id === 'remedios-cronicos');
+    if (hasContinuousMeds && !medicationDetails['remedios-cronicos']?.trim()) {
+      alert('Por favor, especifique qual medicamento de uso contínuo você precisa.');
+      return;
+    }
+
+    // Adicionar detalhes dos medicamentos aos itens selecionados
+    const itemsWithDetails = localSelectedItems.map(item => {
+      if (item.id === 'remedios-cronicos' && medicationDetails[item.id]) {
+        return {
+          ...item,
+          medicationDetails: medicationDetails[item.id]
+        };
+      }
+      return item;
+    });
+    onItemsSelected(itemsWithDetails);
   };
 
   const getPriorityColor = (priority) => {
@@ -184,22 +217,44 @@ const NeedsSelector = ({ onItemsSelected, selectedItems = [] }) => {
                     <p className="text-sm text-gray-600 mb-3">{item.description}</p>
                     
                     {isSelected && (
-                      <div className="flex items-center gap-2 mt-3">
-                        <label className="text-sm font-medium text-gray-700">
-                          Quantidade:
-                        </label>
-                        <input
-                          type="number"
-                          min="1"
-                          max="10"
-                          value={isSelected.quantity}
-                          onChange={(e) => {
-                            e.stopPropagation();
-                            handleQuantityChange(item.id, e.target.value);
-                          }}
-                          onClick={(e) => e.stopPropagation()}
-                          className="w-16 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-green-600"
-                        />
+                      <div className="mt-3 space-y-3">
+                        <div className="flex items-center gap-2">
+                          <label className="text-sm font-medium text-gray-700">
+                            Quantidade:
+                          </label>
+                          <input
+                            type="number"
+                            min="1"
+                            max="10"
+                            value={isSelected.quantity}
+                            onChange={(e) => {
+                              e.stopPropagation();
+                              handleQuantityChange(item.id, e.target.value);
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                            className="w-16 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-green-600"
+                          />
+                        </div>
+                        
+                        {/* Campo específico para medicamentos de uso contínuo */}
+                        {item.id === 'remedios-cronicos' && (
+                          <div className="flex flex-col gap-1">
+                            <label className="text-sm font-medium text-gray-700">
+                              Especificar medicamento(s):
+                            </label>
+                            <textarea
+                              placeholder="Digite o nome do medicamento, dosagem e frequência (ex: Losartana 50mg, 1x ao dia)"
+                              value={medicationDetails[item.id] || ''}
+                              onChange={(e) => {
+                                e.stopPropagation();
+                                handleMedicationDetailChange(item.id, e.target.value);
+                              }}
+                              onClick={(e) => e.stopPropagation()}
+                              rows="3"
+                              className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-green-600 resize-none"
+                            />
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -227,6 +282,12 @@ const NeedsSelector = ({ onItemsSelected, selectedItems = [] }) => {
                 <div className="flex-1">
                   <h4 className="font-medium text-gray-900">{item.name}</h4>
                   <p className="text-sm text-gray-600">Quantidade: {item.quantity}</p>
+                  {item.id === 'remedios-cronicos' && medicationDetails[item.id] && (
+                    <div className="mt-1 p-2 bg-blue-50 rounded border-l-4 border-blue-400">
+                      <p className="text-xs font-medium text-blue-800">Medicamento especificado:</p>
+                      <p className="text-sm text-blue-700">{medicationDetails[item.id]}</p>
+                    </div>
+                  )}
                 </div>
                 <button
                   onClick={() => handleItemToggle(item)}
