@@ -222,12 +222,12 @@
     "id": "1760635428923-qx9ncb",
     "name": "Emanuel Prado",
     "email": "emanuel@gmail.com",
-    "phone": "10773590245",
+    "phone": "19997589727",
     "address": {
       "city": "",
       "state": ""
     },
-    "status": "validated",
+    "status": "pending",
     "createdAt": "2025-10-16T17:23:48.920Z",
     "notes": "",
     "history": [
@@ -265,6 +265,12 @@
         "at": "2025-10-16T17:25:08.493Z",
         "by": "admin",
         "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-16T17:38:24.504Z",
+        "by": "system",
+        "action": "update",
         "details": ""
       }
     ]
