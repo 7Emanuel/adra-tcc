@@ -72,7 +72,19 @@ const LoginCadastro = () => {
         // Simular login
         const user = AuthService.login(formData.email, formData.senha);
         if (user) {
-          navigate('/espera-validacao');
+          console.log('✅ Login realizado, verificando status:', user.verificationStatus);
+          
+          // Verificar status de validação do usuário
+          if (user.verificationStatus === 'approved') {
+            console.log('🎉 Usuário aprovado - redirecionando para conta validada');
+            navigate('/conta-validada');
+          } else if (user.verificationStatus === 'rejected') {
+            console.log('❌ Usuário rejeitado - mostrando erro');
+            setErrors({ email: 'Sua conta foi rejeitada pelo administrador. Entre em contato conosco.' });
+          } else {
+            console.log('⏳ Usuário pendente - redirecionando para espera');
+            navigate('/espera-validacao');
+          }
         } else {
           setErrors({ email: 'Email ou senha incorretos' });
         }

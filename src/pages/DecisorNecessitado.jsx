@@ -25,21 +25,17 @@ const DecisorNecessitado = () => {
     setIsLoading(true);
     
     try {
-      // Verificar se usuário já está logado
-      if (AuthService.isLoggedIn()) {
-        if (AuthService.isVerified()) {
-          // Já verificado, vai direto para o pedido
-          navigate('/pedir-doacao');
-        } else {
-          // Precisa verificar
-          navigate('/espera-validacao');
-        }
-      } else {
-        // Não logado, vai para login/cadastro
-        navigate('/login-cadastro');
-      }
+      // Sempre exigir login novamente, mesmo se já estiver logado
+      // Isso força o usuário a fazer login a cada nova seleção de necessidade
+      console.log('🔄 Sempre redirecionando para login para revalidar status');
+      
+      // Limpar sessão atual para forçar novo login
+      AuthService.logout();
+      
+      // Redirecionar para login/cadastro
+      navigate('/login-cadastro');
     } catch (error) {
-      console.error('Erro ao verificar status:', error);
+      console.error('Erro ao processar:', error);
       navigate('/login-cadastro');
     } finally {
       setIsLoading(false);

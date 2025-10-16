@@ -109,9 +109,9 @@
   },
   {
     "id": "1760625127234-8zxjmu",
-    "name": "Lucas",
+    "name": "Lucas Santos",
     "email": "lucas.lucas@eaportal.org",
-    "phone": "19663864428",
+    "phone": "27894517890",
     "address": {
       "city": "",
       "state": ""
@@ -146,6 +146,72 @@
       },
       {
         "at": "2025-10-16T14:32:22.081Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-16T16:46:18.030Z",
+        "by": "system",
+        "action": "update",
+        "details": ""
+      },
+      {
+        "at": "2025-10-16T16:46:32.518Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-16T16:46:34.252Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-16T16:46:34.396Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-16T16:46:34.603Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-16T16:58:50.441Z",
+        "by": "system",
+        "action": "update",
+        "details": ""
+      },
+      {
+        "at": "2025-10-16T16:59:16.790Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-16T16:59:17.380Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-16T16:59:17.532Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-16T16:59:17.676Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-16T16:59:17.821Z",
         "by": "admin",
         "action": "validated",
         "details": ""

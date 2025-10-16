@@ -16,6 +16,16 @@ export const AuthService = {
       // Compatibilidade retroativa (não usar diretamente no novo fluxo)
       isVerified: false,
       createdAt: new Date().toISOString()
+    },
+    {
+      id: 2,
+      nome: 'Maria Santos',
+      email: 'maria@email.com',
+      telefone: '(11) 88888-8888',
+      senha: '123456',
+      verificationStatus: 'approved', // Usuário já aprovado para teste
+      isVerified: true,
+      createdAt: new Date().toISOString()
     }
   ],
 
@@ -135,5 +145,37 @@ export const AuthService = {
     
     localStorage.setItem('adra_user', JSON.stringify(tempUser));
     return tempUser;
+  },
+
+  // Simular validação por admin (para teste)
+  simulateAdminValidation(email, status = 'approved') {
+    const user = this.mockUsers.find(u => u.email === email);
+    if (user) {
+      user.verificationStatus = status;
+      user.isVerified = status === 'approved';
+      
+      // Se o usuário está logado, atualizar também no localStorage
+      const currentUser = this.getUser();
+      if (currentUser && currentUser.email === email) {
+        currentUser.verificationStatus = status;
+        currentUser.isVerified = status === 'approved';
+        localStorage.setItem('adra_user', JSON.stringify(currentUser));
+      }
+      
+      console.log(`🔧 Simulação: Usuário ${email} teve status alterado para ${status}`);
+      return user;
+    }
+    return null;
+  },
+
+  // Para debug: listar todos os usuários
+  getAllUsers() {
+    return this.mockUsers.map(user => ({
+      id: user.id,
+      nome: user.nome,
+      email: user.email,
+      verificationStatus: user.verificationStatus,
+      isVerified: user.isVerified
+    }));
   }
 };
