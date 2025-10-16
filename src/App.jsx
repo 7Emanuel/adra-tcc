@@ -10,6 +10,7 @@ import PaginaEsperaValidacao from './pages/PaginaEsperaValidacao';
 import ContaValidada from './pages/ContaValidada';
 import PaginaPedidoDoacao from './pages/PaginaPedidoDoacao';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminDashboardSimple from './pages/AdminDashboardSimple';
 
 // Novas páginas do sistema de doações
 import DonorHub from './pages/DonorHub';

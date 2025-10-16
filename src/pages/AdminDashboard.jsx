@@ -14,12 +14,13 @@ const TabButton = ({ active, children, ...props }) => (
   </button>
 );
 
-function usePagedFetcher(fetcher, initialParams) {
+function usePagedFetcher(fetcher, initialParams, enabled = true) {
   const [params, setParams] = useState(initialParams);
   const [data, setData] = useState({ items: [], page: 1, pageSize: 20, total: 0, pages: 0 });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   useEffect(() => {
+    if (!enabled) return;
     let mounted = true;
     setLoading(true);
     setError('');
@@ -28,26 +29,55 @@ function usePagedFetcher(fetcher, initialParams) {
       .catch((e) => { if (mounted) setError(e.message || 'Erro'); })
       .finally(() => { if (mounted) setLoading(false); });
     return () => { mounted = false; };
-  }, [JSON.stringify(params)]);
+  }, [JSON.stringify(params), enabled]);
   return { data, loading, error, params, setParams };
 }
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [tab, setTab] = useState('beneficiaries');
-  const [showAdminLogin, setShowAdminLogin] = useState(true);
+  const [showAdminLogin, setShowAdminLogin] = useState(false); // Mudado para false
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [detailItem, setDetailItem] = useState(null);
   const [rejectItem, setRejectItem] = useState(null);
   const [rejectReason, setRejectReason] = useState('');
 
+  console.log('🔍 AdminDashboard - Estado atual:', { showAdminLogin, isAuthenticated });
+
+  // Verificar se já há uma sessão de admin ao carregar a página
+  useEffect(() => {
+    const checkExistingSession = async () => {
+      try {
+        // Fazer uma requisição simples para verificar se já está autenticado
+        const response = await fetch('/api/admin/beneficiaries?page=1&pageSize=1', {
+          credentials: 'include'
+        });
+        if (response.ok) {
+          console.log('✅ Sessão existente encontrada');
+          setIsAuthenticated(true);
+          setShowAdminLogin(false);
+        } else {
+          console.log('❌ Nenhuma sessão válida encontrada - redirecionando para home');
+          navigate('/');
+        }
+      } catch (error) {
+        console.log('❌ Erro ao verificar sessão:', error);
+        navigate('/');
+      }
+    };
+    
+    checkExistingSession();
+  }, [navigate]);
+
   const beneficiaries = usePagedFetcher(
     (p) => adminApi.beneficiaries(p),
-    { status: 'pending', search: '', page: 1, pageSize: 20 }
+    { status: 'pending', search: '', page: 1, pageSize: 20 },
+    isAuthenticated
   );
   const donations = usePagedFetcher(
     (p) => adminApi.donations(p),
-    { status: '', search: '', page: 1, pageSize: 20 }
+    { status: '', search: '', page: 1, pageSize: 20 },
+    isAuthenticated
   );
 
   const handleExport = async () => {
@@ -76,10 +106,12 @@ export default function AdminDashboard() {
   useEffect(() => {
     const be = beneficiaries.error || '';
     const de = donations.error || '';
+    console.log('🔍 Verificando erros:', { beneficiariesError: be, donationsError: de });
     if (/(Sem sessão|Sessão inválida)/i.test(be + ' ' + de)) {
-      setShowAdminLogin(true);
+      console.log('❌ Sessão inválida detectada, redirecionando para home');
+      navigate('/');
     }
-  }, [beneficiaries.error, donations.error]);
+  }, [beneficiaries.error, donations.error, navigate]);
 
   // If the admin API is down (proxy/500), show an empty-state message instead of raw error for beneficiaries
   const beneErrorLooksLikeServerDown = /Erro\s*5\d\d|ECONNREFUSED|Failed to fetch|NetworkError|proxy/i.test(
@@ -195,8 +227,10 @@ export default function AdminDashboard() {
           navigate('/');
         }}
         onSuccess={() => {
+          console.log('✅ onSuccess do modal chamado');
           setShowAdminLogin(false);
           setIsAuthenticated(true);
+          console.log('✅ Estado atualizado: isAuthenticated = true');
           // Trigger refetch by resetting params
           beneficiaries.setParams({ ...beneficiaries.params });
           donations.setParams({ ...donations.params });
@@ -277,19 +311,6 @@ export default function AdminDashboard() {
           </div>
         </div>
       )}
-      {/* Admin login modal - obrigatório para acesso */}
-      <AdminLoginModal
-        isOpen={showAdminLogin}
-        onClose={() => {
-          // Não permitir fechar sem autenticação - redirecionar para home
-          navigate('/');
-        }}
-        onSuccess={() => {
-          console.log('✅ Login realizado com sucesso!');
-          setShowAdminLogin(false);
-          setIsAuthenticated(true);
-        }}
-      />
     </div>
   );
 }

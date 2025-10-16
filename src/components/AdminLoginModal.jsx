@@ -16,12 +16,17 @@ const AdminLoginModal = ({ isOpen, onClose, onSuccess }) => {
       return;
     }
     setLoading(true);
+    console.log('🔐 Iniciando login com senha:', password);
     try {
-      await adminApi.login(password.trim());
+      const result = await adminApi.login(password.trim());
+      console.log('✅ Login realizado com sucesso:', result);
       setPassword('');
       onClose?.();
+      console.log('🎯 Chamando onSuccess...');
       onSuccess?.();
+      console.log('✅ onSuccess chamado');
     } catch (err) {
+      console.error('❌ Erro no login:', err);
       setError(err.message || 'Erro ao entrar');
     } finally {
       setLoading(false);

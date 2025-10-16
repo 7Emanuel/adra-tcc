@@ -6,16 +6,35 @@ import Button from '../components/Button';
 import Modal from '../components/Modal';
 import FeatureCard from '../components/FeatureCard';
 import StepCard from '../components/StepCard';
+import AdminLoginModal from '../components/AdminLoginModal';
 
 const Home = () => {
   const navigate = useNavigate();
   const [isDoarModalOpen, setIsDoarModalOpen] = useState(false);
   const [infoModal, setInfoModal] = useState({ open: false, title: '', paragraphs: [], icon: null });
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
   
 
   // Navegar para o hub de doações em vez de abrir modal
   const handleDoarClick = () => navigate('/doar');
   const handleAjudaClick = () => navigate('/preciso-de-ajuda');
+
+  // Middleware de autenticação admin
+  const handleAdminClick = () => {
+    console.log('🔑 Botão admin clicado - abrindo modal de login');
+    setShowAdminLogin(true);
+  };
+
+  const handleAdminLoginSuccess = () => {
+    console.log('✅ Login admin bem-sucedido - redirecionando');
+    setShowAdminLogin(false);
+    navigate('/admin');
+  };
+
+  const handleAdminLoginClose = () => {
+    console.log('❌ Modal admin fechado');
+    setShowAdminLogin(false);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -465,7 +484,7 @@ const Home = () => {
 
       {/* Admin entry button (discreto no canto) */}
       <button
-        onClick={() => navigate('/admin')}
+        onClick={handleAdminClick}
         aria-label="Entrar como administrador"
         title="Entrar como administrador"
         className="fixed bottom-5 right-5 z-40 inline-flex items-center justify-center rounded-full border border-gray-300 bg-white/80 text-gray-600 shadow-md backdrop-blur px-3 py-2 hover:bg-white hover:text-green-700 hover:shadow-lg opacity-70 hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-green-600"
@@ -479,6 +498,13 @@ const Home = () => {
 
       {/* Footer */}
       <Footer />
+
+      {/* Modal de login administrativo (middleware) */}
+      <AdminLoginModal
+        isOpen={showAdminLogin}
+        onClose={handleAdminLoginClose}
+        onSuccess={handleAdminLoginSuccess}
+      />
 
       {/* Modals */}
       <Modal
