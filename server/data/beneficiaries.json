@@ -217,5 +217,56 @@
         "details": ""
       }
     ]
+  },
+  {
+    "id": "1760635428923-qx9ncb",
+    "name": "Emanuel Prado",
+    "email": "emanuel@gmail.com",
+    "phone": "10773590245",
+    "address": {
+      "city": "",
+      "state": ""
+    },
+    "status": "validated",
+    "createdAt": "2025-10-16T17:23:48.920Z",
+    "notes": "",
+    "history": [
+      {
+        "at": "2025-10-16T17:23:48.920Z",
+        "by": "system",
+        "action": "create",
+        "details": ""
+      },
+      {
+        "at": "2025-10-16T17:25:07.255Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-16T17:25:08.005Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-16T17:25:08.149Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-16T17:25:08.339Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-16T17:25:08.493Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      }
+    ]
   }
 ]
