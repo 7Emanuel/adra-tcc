@@ -28,7 +28,7 @@ const PaginaEsperaValidacao = () => {
         const res = await api(`/api/beneficiaries/status?email=${encodeURIComponent(currentUser.email || '')}`);
         if (res.exists) {
           if (res.status === 'validated' || res.status === 'approved') {
-            navigate('/pedir-doacao', { replace: true });
+            navigate('/conta-validada', { replace: true });
             return;
           }
           if (res.status === 'rejected') {

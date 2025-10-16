@@ -7,6 +7,7 @@ import EmBreve from './pages/EmBreve';
 import DecisorNecessitado from './pages/DecisorNecessitado';
 import LoginCadastro from './pages/LoginCadastro';
 import PaginaEsperaValidacao from './pages/PaginaEsperaValidacao';
+import ContaValidada from './pages/ContaValidada';
 import PaginaPedidoDoacao from './pages/PaginaPedidoDoacao';
 import AdminDashboard from './pages/AdminDashboard';
 
@@ -32,6 +33,7 @@ function App() {
         <Route path="/preciso-de-ajuda" element={<DecisorNecessitado />} />
         <Route path="/login-cadastro" element={<LoginCadastro />} />
         <Route path="/espera-validacao" element={<PaginaEsperaValidacao />} />
+        <Route path="/conta-validada" element={<ContaValidada />} />
         <Route path="/pedir-doacao" element={<PaginaPedidoDoacao />} />
         
         {/* NOVAS rotas do sistema de doações */}

@@ -83,14 +83,71 @@
       "city": "",
       "state": ""
     },
-    "status": "pending",
+    "status": "rejected",
     "createdAt": "2025-10-08T12:57:31.642Z",
-    "notes": "",
+    "notes": "sim",
     "history": [
       {
         "at": "2025-10-08T12:57:31.642Z",
         "by": "system",
         "action": "create",
+        "details": ""
+      },
+      {
+        "at": "2025-10-16T14:15:04.115Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-16T14:15:45.498Z",
+        "by": "admin",
+        "action": "rejected",
+        "details": "sim"
+      }
+    ]
+  },
+  {
+    "id": "1760625127234-8zxjmu",
+    "name": "Lucas",
+    "email": "lucas.lucas@eaportal.org",
+    "phone": "19663864428",
+    "address": {
+      "city": "",
+      "state": ""
+    },
+    "status": "validated",
+    "createdAt": "2025-10-16T14:32:07.231Z",
+    "notes": "",
+    "history": [
+      {
+        "at": "2025-10-16T14:32:07.231Z",
+        "by": "system",
+        "action": "create",
+        "details": ""
+      },
+      {
+        "at": "2025-10-16T14:32:20.075Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-16T14:32:21.753Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-16T14:32:21.913Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-16T14:32:22.081Z",
+        "by": "admin",
+        "action": "validated",
         "details": ""
       }
     ]

@@ -87,25 +87,45 @@ function requireAdmin(req, res, next) {
   }
 }
 
-// Login
+// Login - versão simplificada para debug
 router.post('/login', rateLimitLogin, (req, res) => {
-  const { password } = req.body || {};
-  if (!password || typeof password !== 'string') {
-    return res.status(400).json({ error: 'Senha ausente' });
+  try {
+    console.log('🔑 Tentativa de login recebida');
+    const { password } = req.body || {};
+    
+    if (!password || typeof password !== 'string') {
+      console.log('❌ Senha ausente');
+      return res.status(400).json({ error: 'Senha ausente' });
+    }
+    
+    console.log('🔍 Verificando senha...');
+    console.log('Senha recebida:', password);
+    console.log('Senha esperada:', ADMIN_PASSWORD);
+    
+    if (password !== ADMIN_PASSWORD) {
+      console.log('❌ Senha incorreta');
+      return res.status(401).json({ error: 'Senha incorreta.' });
+    }
+    
+    console.log('✅ Senha correta, criando token...');
+    const token = signAdminToken({ at: Date.now() });
+    console.log('🎫 Token criado:', token ? 'sim' : 'não');
+    
+    const isProd = process.env.NODE_ENV === 'production';
+    res.cookie('admin_session', token, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: 'lax',
+      maxAge: SESSION_EXPIRES_HOURS * 60 * 60 * 1000,
+      path: '/',
+    });
+    
+    console.log('🎉 Login realizado com sucesso');
+    res.json({ ok: true });
+  } catch (error) {
+    console.error('💥 Erro no login:', error);
+    res.status(500).json({ error: 'Erro interno do servidor' });
   }
-  if (password !== ADMIN_PASSWORD) {
-    return res.status(401).json({ error: 'Senha incorreta.' });
-  }
-  const token = signAdminToken({ at: Date.now() });
-  const isProd = process.env.NODE_ENV === 'production';
-  res.cookie('admin_session', token, {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: 'lax',
-    maxAge: SESSION_EXPIRES_HOURS * 60 * 60 * 1000,
-    path: '/',
-  });
-  res.json({ ok: true });
 });
 
 // Logout

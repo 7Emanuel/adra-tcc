@@ -35,7 +35,8 @@ function usePagedFetcher(fetcher, initialParams) {
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [tab, setTab] = useState('beneficiaries');
-  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [showAdminLogin, setShowAdminLogin] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [detailItem, setDetailItem] = useState(null);
   const [rejectItem, setRejectItem] = useState(null);
   const [rejectReason, setRejectReason] = useState('');
@@ -90,24 +91,32 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b sticky top-0 z-20">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-green-600 rounded-md flex items-center justify-center"><span className="text-white font-bold text-sm">A</span></div>
-            <h1 className="text-xl font-bold text-gray-900">Painel Administrativo</h1>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="secondary" size="sm" onClick={() => navigate('/')}>Home</Button>
-            <Button variant="primary" size="sm" onClick={() => adminApi.logout().then(() => navigate('/'))}>Sair</Button>
-          </div>
-        </div>
-        <div className="container mx-auto px-4">
-          <div className="flex gap-2">
-            <TabButton active={tab==='beneficiaries'} onClick={() => setTab('beneficiaries')}>Validações pendentes</TabButton>
-            <TabButton active={tab==='donations'} onClick={() => setTab('donations')}>Coletas/Entregas</TabButton>
-          </div>
-        </div>
-      </header>
+      {/* Conteúdo principal - só mostra se autenticado */}
+      {isAuthenticated ? (
+        <div>
+          <header className="bg-white border-b sticky top-0 z-20">
+            <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-green-600 rounded-md flex items-center justify-center"><span className="text-white font-bold text-sm">A</span></div>
+                <h1 className="text-xl font-bold text-gray-900">Painel Administrativo</h1>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button variant="secondary" size="sm" onClick={() => navigate('/')}>Home</Button>
+                <Button variant="primary" size="sm" onClick={() => {
+                  adminApi.logout().then(() => {
+                    setIsAuthenticated(false);
+                    setShowAdminLogin(true);
+                  });
+                }}>Sair</Button>
+              </div>
+            </div>
+            <div className="container mx-auto px-4">
+              <div className="flex gap-2">
+                <TabButton active={tab==='beneficiaries'} onClick={() => setTab('beneficiaries')}>Validações pendentes</TabButton>
+                <TabButton active={tab==='donations'} onClick={() => setTab('donations')}>Coletas/Entregas</TabButton>
+              </div>
+            </div>
+          </header>
 
       <main className="container mx-auto px-4 py-6">
         <div className="flex items-center gap-2 mb-4">
@@ -178,12 +187,16 @@ export default function AdminDashboard() {
         )}
       </main>
 
-      {/* Admin login modal when session is missing/invalid */}
+      {/* Admin login modal - obrigatório para acesso */}
       <AdminLoginModal
         isOpen={showAdminLogin}
-        onClose={() => setShowAdminLogin(false)}
+        onClose={() => {
+          // Não permitir fechar sem autenticação - redirecionar para home
+          navigate('/');
+        }}
         onSuccess={() => {
           setShowAdminLogin(false);
+          setIsAuthenticated(true);
           // Trigger refetch by resetting params
           beneficiaries.setParams({ ...beneficiaries.params });
           donations.setParams({ ...donations.params });
@@ -251,6 +264,32 @@ export default function AdminDashboard() {
           />
         </div>
       </Modal>
+        </div>
+      ) : (
+        // Tela de login se não autenticado
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-white font-bold text-xl">A</span>
+            </div>
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">Acesso Administrativo</h2>
+            <p className="text-gray-600">Digite sua senha para continuar</p>
+          </div>
+        </div>
+      )}
+      {/* Admin login modal - obrigatório para acesso */}
+      <AdminLoginModal
+        isOpen={showAdminLogin}
+        onClose={() => {
+          // Não permitir fechar sem autenticação - redirecionar para home
+          navigate('/');
+        }}
+        onSuccess={() => {
+          console.log('✅ Login realizado com sucesso!');
+          setShowAdminLogin(false);
+          setIsAuthenticated(true);
+        }}
+      />
     </div>
   );
 }

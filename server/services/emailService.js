@@ -15,6 +15,14 @@ class EmailService {
         return;
       }
 
+      // Modo desenvolvimento - simula emails sem enviar
+      if (process.env.EMAIL_MODE === 'development') {
+        this.isEnabled = true;
+        this.isDevelopment = true;
+        console.log('📧 Modo desenvolvimento ativo - Emails serão simulados');
+        return;
+      }
+
       this.transporter = nodemailer.createTransporter({
         host: process.env.SMTP_HOST,
         port: process.env.SMTP_PORT || 587,
@@ -28,6 +36,7 @@ class EmailService {
       // Testar conexão
       await this.transporter.verify();
       this.isEnabled = true;
+      this.isDevelopment = false;
       console.log('✅ Serviço de email configurado com sucesso');
       
     } catch (error) {
@@ -51,6 +60,15 @@ class EmailService {
         subject: '🔔 Novo Cadastro Pendente - ADRA',
         html: this.generateBeneficiaryNotificationEmail(beneficiaryData)
       };
+
+      // Modo desenvolvimento - simula envio
+      if (this.isDevelopment) {
+        console.log('📧 EMAIL SIMULADO (Modo Desenvolvimento):');
+        console.log('Para:', emailOptions.to);
+        console.log('Assunto:', emailOptions.subject);
+        console.log('Dados do beneficiário:', beneficiaryData.name, '-', beneficiaryData.email);
+        return true;
+      }
 
       const result = await this.transporter.sendMail(emailOptions);
       console.log('✅ Email de notificação enviado:', result.messageId);
