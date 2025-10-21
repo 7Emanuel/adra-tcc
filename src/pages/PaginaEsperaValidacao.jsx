@@ -146,39 +146,9 @@ const PaginaEsperaValidacao = () => {
               <p className="text-gray-700 mb-4">
                 Aguardando validação da equipe da ADRA...
               </p>
-              <Button variant="primary" size="lg" disabled className="w-full opacity-70 cursor-not-allowed mb-4">
+              <Button variant="primary" size="lg" disabled className="w-full opacity-70 cursor-not-allowed">
                 Aguardando validação da equipe da ADRA...
               </Button>
-              
-              {/* Botão de teste apenas para demonstração */}
-              <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <p className="text-sm text-yellow-800 mb-3">
-                  🧪 <strong>Para teste:</strong> Simular validação pelo admin
-                </p>
-                <div className="flex gap-2 justify-center">
-                  <Button 
-                    variant="secondary" 
-                    size="sm"
-                    onClick={() => {
-                      AuthService.simulateAdminValidation(user.email, 'approved');
-                      navigate('/conta-validada');
-                    }}
-                  >
-                    ✅ Simular Aprovação
-                  </Button>
-                  <Button 
-                    variant="accent" 
-                    size="sm"
-                    onClick={() => {
-                      AuthService.simulateAdminValidation(user.email, 'rejected');
-                      setRejectionReason('Documentos incompletos para teste');
-                      window.location.reload();
-                    }}
-                  >
-                    ❌ Simular Rejeição
-                  </Button>
-                </div>
-              </div>
             </div>
           )}
 
