@@ -222,7 +222,7 @@
     "id": "1760635428923-qx9ncb",
     "name": "Emanuel Prado",
     "email": "emanuel@gmail.com",
-    "phone": "10773590245",
+    "phone": "26106483958",
     "address": {
       "city": "",
       "state": ""
@@ -383,6 +383,54 @@
       },
       {
         "at": "2025-10-17T12:20:48.996Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-21T14:09:04.752Z",
+        "by": "system",
+        "action": "update",
+        "details": ""
+      },
+      {
+        "at": "2025-10-21T14:11:43.071Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-21T14:16:05.332Z",
+        "by": "system",
+        "action": "update",
+        "details": ""
+      },
+      {
+        "at": "2025-10-21T14:16:40.244Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-21T14:16:41.540Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-21T14:16:41.874Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-21T14:16:42.099Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-21T14:16:42.361Z",
         "by": "admin",
         "action": "validated",
         "details": ""
