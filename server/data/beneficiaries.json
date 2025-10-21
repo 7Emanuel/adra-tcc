@@ -222,12 +222,12 @@
     "id": "1760635428923-qx9ncb",
     "name": "Emanuel Prado",
     "email": "emanuel@gmail.com",
-    "phone": "19997589727",
+    "phone": "10773590245",
     "address": {
       "city": "",
       "state": ""
     },
-    "status": "pending",
+    "status": "validated",
     "createdAt": "2025-10-16T17:23:48.920Z",
     "notes": "",
     "history": [
@@ -271,6 +271,147 @@
         "at": "2025-10-16T17:38:24.504Z",
         "by": "system",
         "action": "update",
+        "details": ""
+      },
+      {
+        "at": "2025-10-17T12:16:46.763Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-17T12:16:46.923Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-17T12:16:47.097Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-17T12:16:47.243Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-17T12:16:47.393Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-17T12:16:47.553Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-17T12:16:47.705Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-17T12:16:47.850Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-17T12:16:47.986Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-17T12:16:48.129Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-17T12:16:48.282Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-17T12:16:48.432Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-17T12:18:39.466Z",
+        "by": "system",
+        "action": "update",
+        "details": ""
+      },
+      {
+        "at": "2025-10-17T12:20:46.974Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-17T12:20:48.397Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-17T12:20:48.556Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-17T12:20:48.717Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-17T12:20:48.852Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      },
+      {
+        "at": "2025-10-17T12:20:48.996Z",
+        "by": "admin",
+        "action": "validated",
+        "details": ""
+      }
+    ]
+  },
+  {
+    "id": "1760703296631-fcg2dx",
+    "name": "lucas dos santos",
+    "email": "lucas@gmail.com",
+    "phone": "27890354728",
+    "address": {
+      "city": "",
+      "state": ""
+    },
+    "status": "validated",
+    "createdAt": "2025-10-17T12:14:56.629Z",
+    "notes": "",
+    "history": [
+      {
+        "at": "2025-10-17T12:14:56.629Z",
+        "by": "system",
+        "action": "create",
+        "details": ""
+      },
+      {
+        "at": "2025-10-17T12:15:07.833Z",
+        "by": "admin",
+        "action": "validated",
         "details": ""
       }
     ]
