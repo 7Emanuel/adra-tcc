@@ -1,16 +1,28 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthService } from '../services/AuthService';
 
 const ContaValidada = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Redireciona para a página de pedidos após 3 segundos
-    const timer = setTimeout(() => {
-      navigate('/pedir-doacao', { replace: true });
-    }, 3000);
+    // Sincroniza o status do usuário com o backend antes de redirecionar
+    const syncAndRedirect = async () => {
+      try {
+        await AuthService.syncUserStatusWithBackend();
+      } catch (error) {
+        console.warn('Erro ao sincronizar status:', error);
+      }
+      
+      // Redireciona para a página de pedidos após 3 segundos
+      const timer = setTimeout(() => {
+        navigate('/pedir-doacao', { replace: true });
+      }, 3000);
 
-    return () => clearTimeout(timer);
+      return () => clearTimeout(timer);
+    };
+
+    syncAndRedirect();
   }, [navigate]);
 
   return (

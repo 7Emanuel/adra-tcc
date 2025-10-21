@@ -36,7 +36,7 @@ const PaginaPedidoDoacao = () => {
 
   useEffect(() => {
     // Verifica acesso e carrega dados
-    const checkAccess = () => {
+    const checkAccess = async () => {
       const isLoggedIn = AuthService.isLoggedIn();
       
       if (!isLoggedIn) {
@@ -44,7 +44,14 @@ const PaginaPedidoDoacao = () => {
         return;
       }
       
-      const currentUser = AuthService.getUser();
+      // Sincroniza status do usuário com o backend primeiro
+      let currentUser;
+      try {
+        currentUser = await AuthService.syncUserStatusWithBackend();
+      } catch (error) {
+        console.warn('Erro ao sincronizar status:', error);
+        currentUser = AuthService.getUser();
+      }
       
       // Guard: apenas usuários aprovados podem acessar
       if (currentUser.verificationStatus !== 'approved' && currentUser.isVerified !== true) {

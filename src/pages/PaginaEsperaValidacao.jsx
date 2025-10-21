@@ -4,12 +4,22 @@ import { AuthService } from '../services/AuthService';
 import Button from '../components/Button';
 import InfoBanner from '../components/necessitado/InfoBanner';
 import { api } from '../services/apiClient';
+import { useStatusSync } from '../hooks/useStatusSync';
 
 const PaginaEsperaValidacao = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [checking, setChecking] = useState(true);
   const [rejectionReason, setRejectionReason] = useState('');
+
+  // Hook para sincronização automática do status
+  const { isChecking } = useStatusSync({
+    intervalMs: 5000, // Verifica a cada 5 segundos
+    enabled: true,
+    onStatusChange: (newStatus, oldStatus) => {
+      console.log(`Status mudou de ${oldStatus} para ${newStatus}`);
+    }
+  });
 
   useEffect(() => {
     // Verifica se usuário está logado e com status correto
@@ -28,10 +38,24 @@ const PaginaEsperaValidacao = () => {
         const res = await api(`/api/beneficiaries/status?email=${encodeURIComponent(currentUser.email || '')}`);
         if (res.exists) {
           if (res.status === 'validated' || res.status === 'approved') {
+            // Atualiza o estado do usuário no localStorage para sincronizar com o backend
+            const updatedUser = {
+              ...currentUser,
+              verificationStatus: 'approved',
+              isVerified: true
+            };
+            localStorage.setItem('adra_user', JSON.stringify(updatedUser));
             navigate('/conta-validada', { replace: true });
             return;
           }
           if (res.status === 'rejected') {
+            // Atualiza o estado do usuário para refletir a rejeição
+            const updatedUser = {
+              ...currentUser,
+              verificationStatus: 'rejected',
+              isVerified: false
+            };
+            localStorage.setItem('adra_user', JSON.stringify(updatedUser));
             setRejectionReason(res.reason || '');
           }
         } else {
@@ -144,10 +168,10 @@ const PaginaEsperaValidacao = () => {
                 <div className="w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full animate-spin" aria-hidden="true"></div>
               </div>
               <p className="text-gray-700 mb-4">
-                Aguardando validação da equipe da ADRA...
+                {isChecking ? 'Verificando status...' : 'Aguardando validação da equipe da ADRA...'}
               </p>
               <Button variant="primary" size="lg" disabled className="w-full opacity-70 cursor-not-allowed">
-                Aguardando validação da equipe da ADRA...
+                {isChecking ? 'Verificando...' : 'Aguardando validação da equipe da ADRA...'}
               </Button>
             </div>
           )}

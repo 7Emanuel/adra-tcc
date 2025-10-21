@@ -168,6 +168,54 @@ export const AuthService = {
     return null;
   },
 
+  // Sincronizar status do usuário com o backend
+  async syncUserStatusWithBackend() {
+    const user = this.getUser();
+    if (!user || !user.email) return null;
+
+    try {
+      const response = await fetch(`http://localhost:3000/api/beneficiaries/status?email=${encodeURIComponent(user.email)}`);
+      const data = await response.json();
+      
+      if (data.exists) {
+        let updatedStatus;
+        switch (data.status) {
+          case 'validated':
+          case 'approved':
+            updatedStatus = 'approved';
+            break;
+          case 'rejected':
+            updatedStatus = 'rejected';
+            break;
+          default:
+            updatedStatus = 'pending';
+        }
+        
+        // Atualiza o usuário no localStorage
+        const updatedUser = {
+          ...user,
+          verificationStatus: updatedStatus,
+          isVerified: updatedStatus === 'approved'
+        };
+        
+        localStorage.setItem('adra_user', JSON.stringify(updatedUser));
+        
+        // Atualiza também no mockUsers se existir
+        const mockUser = this.mockUsers.find(u => u.email === user.email);
+        if (mockUser) {
+          mockUser.verificationStatus = updatedStatus;
+          mockUser.isVerified = updatedStatus === 'approved';
+        }
+        
+        return updatedUser;
+      }
+    } catch (error) {
+      console.warn('Erro ao sincronizar status com backend:', error);
+    }
+    
+    return user;
+  },
+
   // Para debug: listar todos os usuários
   getAllUsers() {
     return this.mockUsers.map(user => ({
