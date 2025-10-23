@@ -48,6 +48,8 @@ export default function AdminDashboard() {
   useEffect(() => {
     const checkExistingSession = async () => {
       console.log('🔍 Verificando sessão...');
+      console.log('🌐 Hostname atual:', window.location.hostname);
+      console.log('📍 Ambiente:', import.meta.env.MODE);
       // Por enquanto, sempre mostrar login para evitar problemas de "Carregando..."
       setShowAdminLogin(true);
       setIsAuthenticated(false);
@@ -121,6 +123,13 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Debug info - remove this in production */}
+      {import.meta.env.DEV && (
+        <div className="fixed top-0 right-0 bg-yellow-200 p-2 text-xs z-50">
+          Auth: {isAuthenticated ? 'TRUE' : 'FALSE'} | Modal: {showAdminLogin ? 'OPEN' : 'CLOSED'}
+        </div>
+      )}
+      
       {/* Conteúdo principal - só mostra se autenticado */}
       {isAuthenticated ? (
         <div>
@@ -254,13 +263,20 @@ export default function AdminDashboard() {
         }}
         onSuccess={() => {
           console.log('✅ onSuccess do modal chamado');
+          console.log('🔄 Definindo showAdminLogin = false');
           setShowAdminLogin(false);
+          console.log('🔄 Definindo isAuthenticated = true');
           setIsAuthenticated(true);
           console.log('✅ Estado atualizado: isAuthenticated = true');
-          // Trigger refetch by resetting params
-          beneficiaries.setParams({ ...beneficiaries.params });
-          donations.setParams({ ...donations.params });
-          requests.setParams({ ...requests.params });
+          
+          // Force re-render by updating state in next tick
+          setTimeout(() => {
+            console.log('🔄 Trigger refetch dos dados...');
+            beneficiaries.setParams({ ...beneficiaries.params });
+            donations.setParams({ ...donations.params });
+            requests.setParams({ ...requests.params });
+            console.log('✅ Refetch disparado');
+          }, 100);
         }}
       />
 
