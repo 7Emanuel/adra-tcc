@@ -72,7 +72,9 @@ export const adminApi = {
   },
   beneficiaries(params = {}) {
     const q = new URLSearchParams(params).toString();
-    return fetch(`${API}/beneficiaries?${q}`, { credentials: 'include' }).then(json);
+    const url = `${API}/beneficiaries?${q}`;
+    console.log('Fetching beneficiaries from:', url);
+    return fetch(url, { credentials: 'include' }).then(json);
   },
   beneficiary(id) {
     return fetch(`${API}/beneficiaries/${id}`, { credentials: 'include' }).then(json);

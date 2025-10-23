@@ -11,6 +11,7 @@ import ContaValidada from './pages/ContaValidada';
 import PaginaPedidoDoacao from './pages/PaginaPedidoDoacao';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminDashboardSimple from './pages/AdminDashboardSimple';
+import AdminDebug from './pages/AdminDebug';
 
 // Novas páginas do sistema de doações
 import DonorHub from './pages/DonorHub';
@@ -30,6 +31,7 @@ function App() {
         {/* Rotas já existentes */}
         <Route path="/" element={<Home />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/debug" element={<AdminDebug />} />
         <Route path="/doar" element={<DonorHub />} />
         <Route path="/preciso-de-ajuda" element={<DecisorNecessitado />} />
         <Route path="/login-cadastro" element={<LoginCadastro />} />

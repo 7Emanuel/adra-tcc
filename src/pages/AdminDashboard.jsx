@@ -48,21 +48,15 @@ export default function AdminDashboard() {
   useEffect(() => {
     const checkExistingSession = async () => {
       try {
-        // Fazer uma requisição simples para verificar se já está autenticado
-        const response = await fetch('/api/admin/beneficiaries?page=1&pageSize=1', {
-          credentials: 'include'
-        });
-        if (response.ok) {
-          console.log('✅ Sessão existente encontrada');
-          setIsAuthenticated(true);
-          setShowAdminLogin(false);
-        } else {
-          console.log('❌ Nenhuma sessão válida encontrada - redirecionando para home');
-          navigate('/');
-        }
+        // Usar adminApi.beneficiaries para verificar sessão (usa a lógica correta de API)
+        const result = await adminApi.beneficiaries({ page: 1, pageSize: 1 });
+        console.log('✅ Sessão existente encontrada');
+        setIsAuthenticated(true);
+        setShowAdminLogin(false);
       } catch (error) {
-        console.log('❌ Erro ao verificar sessão:', error);
-        navigate('/');
+        console.log('❌ Nenhuma sessão válida encontrada - mostrando modal de login:', error);
+        setShowAdminLogin(true);
+        setIsAuthenticated(false);
       }
     };
     
