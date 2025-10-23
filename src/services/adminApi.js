@@ -1,9 +1,29 @@
-// Detect if we're running on Vercel or local development
-const isVercel = typeof window !== 'undefined' && 
-                 (window.location.hostname.includes('vercel.app') || 
-                  window.location.hostname !== 'localhost');
+// Detect environment and set correct API base URL
+const getApiBase = () => {
+  if (typeof window === 'undefined') return '/api/admin';
+  
+  const hostname = window.location.hostname;
+  
+  // AlwaysData production
+  if (hostname === 'emanuelprado.alwaysdata.net') {
+    return 'https://emanuelprado.alwaysdata.net/api/admin';
+  }
+  
+  // Vercel deployment
+  if (hostname.includes('vercel.app')) {
+    return '/api';
+  }
+  
+  // Local development
+  if (hostname === 'localhost') {
+    return 'http://localhost:3000/api/admin';
+  }
+  
+  // Default fallback
+  return '/api/admin';
+};
 
-const API = isVercel ? '/api' : '/api/admin';
+const API = getApiBase();
 
 async function json(res) {
   if (!res.ok) {
@@ -15,11 +35,11 @@ async function json(res) {
 
 export const adminApi = {
   login(password) {
-    const loginUrl = isVercel ? `${API}/admin/login` : `${API}/login`;
+    const loginUrl = API.includes('vercel.app') || API === '/api' ? `${API}/admin/login` : `${API}/login`;
     return fetch(loginUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }), credentials: 'include' }).then(json);
   },
   logout() {
-    const logoutUrl = isVercel ? `${API}/admin/logout` : `${API}/logout`;
+    const logoutUrl = API.includes('vercel.app') || API === '/api' ? `${API}/admin/logout` : `${API}/logout`;
     return fetch(logoutUrl, { method: 'POST', credentials: 'include' }).then(json);
   },
   beneficiaries(params = {}) {
