@@ -16,7 +16,7 @@ const getApiBase = () => {
   
   // Vercel deployment
   if (hostname.includes('vercel.app')) {
-    return '/api';
+    return '/api/admin';
   }
   
   // For local testing, default to AlwaysData API (since that's where your server is)
@@ -60,14 +60,14 @@ async function json(res) {
 
 export const adminApi = {
   login(password) {
-    const loginUrl = API.includes('vercel.app') || API === '/api' ? `${API}/admin/login` : `${API}/login`;
+    const loginUrl = API.includes('vercel.app') || API.includes('/api/admin') ? `${API}/login` : `${API}/login`;
     console.log('API Base:', API);
     console.log('Login URL:', loginUrl);
     console.log('Current hostname:', window.location.hostname);
     return fetch(loginUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }), credentials: 'include' }).then(json);
   },
   logout() {
-    const logoutUrl = API.includes('vercel.app') || API === '/api' ? `${API}/admin/logout` : `${API}/logout`;
+    const logoutUrl = API.includes('vercel.app') || API.includes('/api/admin') ? `${API}/logout` : `${API}/logout`;
     return fetch(logoutUrl, { method: 'POST', credentials: 'include' }).then(json);
   },
   beneficiaries(params = {}) {
