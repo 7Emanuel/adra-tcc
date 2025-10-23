@@ -10,6 +10,7 @@ import PaginaEsperaValidacao from './pages/PaginaEsperaValidacao';
 import ContaValidada from './pages/ContaValidada';
 import PaginaPedidoDoacao from './pages/PaginaPedidoDoacao';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminDashboardVercel from './pages/AdminDashboardVercel';
 import AdminDashboardSimple from './pages/AdminDashboardSimple';
 import AdminDebug from './pages/AdminDebug';
 import AdminDebugVercel from './pages/AdminDebugVercel';
@@ -31,7 +32,7 @@ function App() {
       <Routes>
         {/* Rotas já existentes */}
         <Route path="/" element={<Home />} />
-        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin" element={<AdminDashboardVercel />} />
         <Route path="/admin/debug" element={<AdminDebug />} />
         <Route path="/admin/debug-vercel" element={<AdminDebugVercel />} />
         <Route path="/doar" element={<DonorHub />} />
