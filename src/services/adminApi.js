@@ -4,6 +4,11 @@ const getApiBase = () => {
   
   const hostname = window.location.hostname;
   
+  // Force use AlwaysData API (can be set in .env)
+  if (import.meta.env.VITE_USE_ALWAYSDATA_API === 'true') {
+    return 'https://emanuelprado.alwaysdata.net/api/admin';
+  }
+  
   // AlwaysData production
   if (hostname === 'emanuelprado.alwaysdata.net') {
     return 'https://emanuelprado.alwaysdata.net/api/admin';
@@ -14,28 +19,51 @@ const getApiBase = () => {
     return '/api';
   }
   
-  // Local development
+  // For local testing, default to AlwaysData API (since that's where your server is)
+  // Only use localhost:3000 if explicitly set
   if (hostname === 'localhost') {
-    return 'http://localhost:3000/api/admin';
+    return import.meta.env.VITE_USE_LOCAL_API === 'true' 
+      ? 'http://localhost:3000/api/admin' 
+      : 'https://emanuelprado.alwaysdata.net/api/admin';
   }
   
-  // Default fallback
-  return '/api/admin';
+  // Default fallback to AlwaysData
+  return 'https://emanuelprado.alwaysdata.net/api/admin';
 };
 
 const API = getApiBase();
 
 async function json(res) {
+  const text = await res.text();
+  console.log('Response URL:', res.url);
+  console.log('Response status:', res.status);
+  console.log('Response text:', text.substring(0, 200));
+  
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
+    let err = {};
+    try {
+      err = JSON.parse(text);
+    } catch (e) {
+      console.error('Failed to parse error response as JSON:', e);
+      throw new Error(`Erro ${res.status}: ${text.substring(0, 100)}`);
+    }
     throw new Error(err.error || `Erro ${res.status}`);
   }
-  return res.json();
+  
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    console.error('Failed to parse success response as JSON:', e);
+    throw new Error('Resposta inválida do servidor');
+  }
 }
 
 export const adminApi = {
   login(password) {
     const loginUrl = API.includes('vercel.app') || API === '/api' ? `${API}/admin/login` : `${API}/login`;
+    console.log('API Base:', API);
+    console.log('Login URL:', loginUrl);
+    console.log('Current hostname:', window.location.hostname);
     return fetch(loginUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }), credentials: 'include' }).then(json);
   },
   logout() {

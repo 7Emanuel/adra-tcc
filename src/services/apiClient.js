@@ -1,8 +1,13 @@
-// Detect environment and set correct API base URL
+// Detect environment and set correct API base URL  
 const getApiBase = () => {
   if (typeof window === 'undefined') return 'http://localhost:3000';
   
   const hostname = window.location.hostname;
+  
+  // Force use AlwaysData API
+  if (import.meta.env.VITE_USE_ALWAYSDATA_API === 'true') {
+    return 'https://emanuelprado.alwaysdata.net';
+  }
   
   // AlwaysData production
   if (hostname === 'emanuelprado.alwaysdata.net') {
@@ -14,13 +19,15 @@ const getApiBase = () => {
     return '/api';
   }
   
-  // Local development
+  // For local testing, default to AlwaysData (since that's where your server is)
   if (hostname === 'localhost') {
-    return import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    return import.meta.env.VITE_USE_LOCAL_API === 'true' 
+      ? (import.meta.env.VITE_API_URL || 'http://localhost:3000')
+      : 'https://emanuelprado.alwaysdata.net';
   }
   
-  // Default fallback
-  return 'http://localhost:3000';
+  // Default fallback to AlwaysData
+  return 'https://emanuelprado.alwaysdata.net';
 };
 
 const API_BASE = getApiBase();
