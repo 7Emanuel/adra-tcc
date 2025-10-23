@@ -6,6 +6,7 @@ import InfoBanner from '../components/necessitado/InfoBanner';
 import AddressCapture from '../components/necessitado/AddressCapture';
 import RequestItemRow from '../components/necessitado/RequestItemRow';
 import TermsCheckbox from '../components/necessitado/TermsCheckbox';
+import { getApiUrl } from '../utils/apiUrl';
 
 const PaginaPedidoDoacao = () => {
   const navigate = useNavigate();
@@ -234,8 +235,8 @@ const PaginaPedidoDoacao = () => {
         termsAccepted
       };
       
-      // Envia para API do servidor (proxy para /api)
-      const res = await fetch('/api/requests', {
+      // Envia para API do servidor
+      const res = await fetch(getApiUrl('/api/requests'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestData)

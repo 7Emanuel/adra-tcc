@@ -174,7 +174,9 @@ export const AuthService = {
     if (!user || !user.email) return null;
 
     try {
-      const response = await fetch(`http://localhost:3000/api/beneficiaries/status?email=${encodeURIComponent(user.email)}`);
+      // Usar a variável de ambiente ou fallback para a URL da API
+      const apiBase = import.meta.env.VITE_API_URL || 'https://emanuelprado.alwaysdata.net';
+      const response = await fetch(`${apiBase}/api/beneficiaries/status?email=${encodeURIComponent(user.email)}`);
       const data = await response.json();
       
       if (data.exists) {

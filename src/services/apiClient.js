@@ -2,6 +2,11 @@
 const getApiBase = () => {
   if (typeof window === 'undefined') return 'http://localhost:3000';
   
+  // Se VITE_API_URL estiver definido, use ele (prioridade máxima)
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  
   const hostname = window.location.hostname;
   
   // Force use AlwaysData API

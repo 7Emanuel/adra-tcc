@@ -2,6 +2,11 @@
 const getApiBase = () => {
   if (typeof window === 'undefined') return '/api/admin';
   
+  // Se VITE_API_URL estiver definido, use ele com /api/admin (prioridade máxima)
+  if (import.meta.env.VITE_API_URL) {
+    return `${import.meta.env.VITE_API_URL}/api/admin`;
+  }
+  
   const hostname = window.location.hostname;
   
   // Force use AlwaysData API (can be set in .env)
