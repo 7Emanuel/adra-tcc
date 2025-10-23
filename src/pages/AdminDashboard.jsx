@@ -47,21 +47,14 @@ export default function AdminDashboard() {
   // Verificar se já há uma sessão de admin ao carregar a página
   useEffect(() => {
     const checkExistingSession = async () => {
-      try {
-        // Usar adminApi.beneficiaries para verificar sessão (usa a lógica correta de API)
-        const result = await adminApi.beneficiaries({ page: 1, pageSize: 1 });
-        console.log('✅ Sessão existente encontrada');
-        setIsAuthenticated(true);
-        setShowAdminLogin(false);
-      } catch (error) {
-        console.log('❌ Nenhuma sessão válida encontrada - mostrando modal de login:', error);
-        setShowAdminLogin(true);
-        setIsAuthenticated(false);
-      }
+      console.log('🔍 Verificando sessão...');
+      // Por enquanto, sempre mostrar login para evitar problemas de "Carregando..."
+      setShowAdminLogin(true);
+      setIsAuthenticated(false);
     };
     
     checkExistingSession();
-  }, [navigate]);
+  }, []);
 
   const beneficiaries = usePagedFetcher(
     (p) => adminApi.beneficiaries(p),
