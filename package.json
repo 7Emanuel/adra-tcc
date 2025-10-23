@@ -9,7 +9,17 @@
     "dev:server": "nodemon server/index.js",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "node server/production.js",
+    "start:api": "node server/index.js",
+    "start:prod": "npm run build && node server/production.js",
+    "deploy": "npm run build && npx prisma generate && npx prisma db push",
+    "db:studio": "npx prisma studio",
+    "db:push": "npx prisma db push",
+    "db:reset": "npx prisma db push --force-reset",
+    "generate:jwt": "node scripts/generate-jwt-secret.js",
+    "vercel:build": "npm run build",
+    "vercel:dev": "vercel dev"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",

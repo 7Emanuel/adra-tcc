@@ -1,4 +1,9 @@
-const API = '/api/admin';
+// Detect if we're running on Vercel or local development
+const isVercel = typeof window !== 'undefined' && 
+                 (window.location.hostname.includes('vercel.app') || 
+                  window.location.hostname !== 'localhost');
+
+const API = isVercel ? '/api' : '/api/admin';
 
 async function json(res) {
   if (!res.ok) {
@@ -10,10 +15,12 @@ async function json(res) {
 
 export const adminApi = {
   login(password) {
-    return fetch(`${API}/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }), credentials: 'include' }).then(json);
+    const loginUrl = isVercel ? `${API}/admin/login` : `${API}/login`;
+    return fetch(loginUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }), credentials: 'include' }).then(json);
   },
   logout() {
-    return fetch(`${API}/logout`, { method: 'POST', credentials: 'include' }).then(json);
+    const logoutUrl = isVercel ? `${API}/admin/logout` : `${API}/logout`;
+    return fetch(logoutUrl, { method: 'POST', credentials: 'include' }).then(json);
   },
   beneficiaries(params = {}) {
     const q = new URLSearchParams(params).toString();

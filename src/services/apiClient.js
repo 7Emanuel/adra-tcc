@@ -1,4 +1,10 @@
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+// Detect if we're running on Vercel or local development
+const isVercel = window.location.hostname.includes('vercel.app') || 
+                 window.location.hostname !== 'localhost';
+
+const API_BASE = isVercel 
+  ? '/api'  // Vercel serverless functions
+  : (import.meta.env.VITE_API_URL || 'http://localhost:3000'); // Local development
 
 function getToken() {
   return localStorage.getItem('auth_token');
