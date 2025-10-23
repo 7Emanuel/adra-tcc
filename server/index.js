@@ -26,6 +26,8 @@ app.use(cookieParser());
 const dataDir = path.resolve(process.cwd(), 'server', 'data');
 const schedulesFile = path.join(dataDir, 'schedules.json');
 const beneficiariesFile = path.join(dataDir, 'beneficiaries.json');
+// Add file-based storage for beneficiary help requests (pedidos)
+const requestsFile = path.join(dataDir, 'requests.json');
 
 async function ensureDataFile() {
   try {
@@ -69,6 +71,29 @@ async function readBeneficiaries() {
 async function writeBeneficiaries(list) {
   await ensureBeneficiariesFile();
   await fs.writeFile(beneficiariesFile, JSON.stringify(list, null, 2), 'utf-8');
+}
+
+// Helpers to persist requests
+async function ensureRequestsFile() {
+  try {
+    await fs.mkdir(dataDir, { recursive: true });
+    await fs.access(requestsFile).catch(async () => {
+      await fs.writeFile(requestsFile, '[]', 'utf-8');
+    });
+  } catch (e) {
+    console.error('Erro ao preparar storage de pedidos', e);
+  }
+}
+
+async function readRequests() {
+  await ensureRequestsFile();
+  const txt = await fs.readFile(requestsFile, 'utf-8');
+  return JSON.parse(txt || '[]');
+}
+
+async function writeRequests(list) {
+  await ensureRequestsFile();
+  await fs.writeFile(requestsFile, JSON.stringify(list, null, 2), 'utf-8');
 }
 
 // Health
@@ -254,6 +279,74 @@ app.post('/coletas/agendar', async (req, res) => {
   } catch (e) {
     console.error('Erro ao criar agendamento de coleta', e);
     res.status(500).json({ error: 'Erro ao criar agendamento' });
+  }
+});
+
+// New: Public endpoint for beneficiary help requests (from PaginaPedidoDoacao)
+app.post('/api/requests', async (req, res) => {
+  try {
+    const body = req.body || {};
+    const now = new Date().toISOString();
+
+    // Basic validation (tolerant): require name and at least one contact (email or phone)
+    const contact = body.contact || {};
+    const name = (contact.name || contact.nome || '').trim();
+    const email = (contact.email || '').trim();
+    const phone = (contact.phone || contact.telefone || '').trim();
+
+    if (!name || (!email && !phone)) {
+      return res.status(400).json({ error: 'Informe nome e ao menos um contato (email ou telefone).' });
+    }
+    if (!Array.isArray(body.items) || body.items.length === 0) {
+      return res.status(400).json({ error: 'Lista de itens é obrigatória' });
+    }
+
+    // Normalize items
+    const normItems = (body.items || []).map((i) => ({
+      name: (i.name || '').trim(),
+      category: i.category || '',
+      qty: Number(i.quantity ?? i.qty ?? 1) || 1,
+      unit: (i.unit || 'unidade').trim(),
+      notes: (i.notes || '').trim(),
+    }));
+
+    const all = await readRequests();
+    const record = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      createdAt: now,
+      userId: body.userId || null,
+      contact: { name, email, phone },
+      address: body.address || null, // { cep, logradouro, numero, complemento, bairro, cidade, uf } ou { coordinates }
+      coordinates: body.coordinates || null,
+      items: normItems,
+      urgency: body.urgency || '',
+      description: body.description || '',
+      termsAccepted: !!body.termsAccepted,
+      status: 'novo',
+    };
+
+    all.push(record);
+    await writeRequests(all);
+
+    // Optional: notify in logs (avoid failing if email service not configured)
+    console.log('[requests] novo pedido recebido:', {
+      id: record.id,
+      contato: record.contact,
+      cidade: record.address?.cidade || record.address?.city,
+      uf: record.address?.uf || record.address?.state,
+      itens: record.items.length,
+    });
+
+    try {
+      await emailService.sendNewBeneficiaryRequest?.(record);
+    } catch (err) {
+      console.warn('[requests] falha ao enviar email opcional:', err?.message);
+    }
+
+    return res.status(201).json({ ok: true, id: record.id });
+  } catch (e) {
+    console.error('Erro ao receber pedido de ajuda', e);
+    res.status(500).json({ error: 'Erro ao enviar pedido' });
   }
 });
 

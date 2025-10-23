@@ -216,10 +216,12 @@ const PaginaPedidoDoacao = () => {
     setIsSubmitting(true);
     
     try {
-      // MOCK: Simula envio para API
+      // Dados para API
       const requestData = {
         userId: user.id,
-        address: coordinates ? { coordinates } : address,
+        contact: { name: user.nome, email: user.email, phone: user.telefone },
+        address: coordinates ? null : address,
+        coordinates: coordinates || null,
         items: items.map(item => ({
           name: item.name.trim(),
           category: item.category,
@@ -229,14 +231,25 @@ const PaginaPedidoDoacao = () => {
         })),
         urgency: urgency.trim(),
         description: description.trim(),
-        termsAccepted,
-        submittedAt: new Date().toISOString()
+        termsAccepted
       };
       
-      // Simula delay da API
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      console.log('[PaginaPedidoDoacao] Pedido enviado:', requestData);
+      // Envia para API do servidor (proxy para /api)
+      const res = await fetch('/api/requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestData)
+      });
+      if (!res.ok) {
+        let msg = `Erro ${res.status}`;
+        try {
+          const err = await res.json();
+          if (err?.error) msg = err.error;
+        } catch {}
+        throw new Error(msg);
+      }
+      const out = await res.json();
+      console.log('[PaginaPedidoDoacao] Pedido enviado:', out);
       
       // Sucesso
       setSubmitSuccess(true);
@@ -246,7 +259,7 @@ const PaginaPedidoDoacao = () => {
       
     } catch (error) {
       console.error('[PaginaPedidoDoacao] Erro ao enviar pedido:', error);
-      alert('Erro ao enviar pedido. Tente novamente.');
+      alert(error?.message || 'Erro ao enviar pedido. Tente novamente.');
     } finally {
       setIsSubmitting(false);
     }

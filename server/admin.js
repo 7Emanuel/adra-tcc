@@ -20,6 +20,8 @@ const SESSION_EXPIRES_HOURS = 12; // 12h
 const dataDir = path.resolve(process.cwd(), 'server', 'data');
 const beneficiariesFile = path.join(dataDir, 'beneficiaries.json');
 const donationsFile = path.join(dataDir, 'donations.json');
+// New file for help requests
+const requestsFile = path.join(dataDir, 'requests.json');
 
 async function ensureJson(filePath, fallback = '[]') {
   await fs.mkdir(path.dirname(filePath), { recursive: true });
@@ -302,6 +304,44 @@ router.get('/donations/export.csv', async (req, res) => {
   ]);
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
   res.setHeader('Content-Disposition', 'attachment; filename="donations.csv"');
+  res.send(csv);
+});
+
+// New: Requests list for admin
+router.get('/requests', async (req, res) => {
+  const { status = '', search = '', page = '1', pageSize = '20' } = req.query || {};
+  try {
+    const all = await readJson(requestsFile);
+    const filtered = all.filter(r => {
+      const st = status ? (r.status || '') === status : true;
+      if (!st) return false;
+      const q = String(search || '').toLowerCase();
+      if (!q) return true;
+      const hay = [r.id, r.contact?.name, r.contact?.email, r.contact?.phone, r.address?.cidade || r.address?.city, r.address?.uf || r.address?.state, r.urgency, (r.items||[]).map(i=>i.name).join(' ')].map(x => (x || '').toLowerCase()).join(' ');
+      return hay.includes(q);
+    });
+    const result = paginate(filtered, page, pageSize);
+    res.json(result);
+  } catch (e) {
+    console.error('[admin] Falha ao listar pedidos, retornando vazio', e);
+    res.json(paginate([], page, pageSize));
+  }
+});
+
+router.get('/requests/export.csv', async (_req, res) => {
+  const all = await readJson(requestsFile);
+  const csv = toCSV(all, [
+    { label: 'ID', accessor: 'id' },
+    { label: 'Nome', accessor: (r) => r.contact?.name || '' },
+    { label: 'Email', accessor: (r) => r.contact?.email || '' },
+    { label: 'Telefone', accessor: (r) => r.contact?.phone || '' },
+    { label: 'Cidade/UF', accessor: (r) => `${r.address?.cidade||r.address?.city||''}/${r.address?.uf||r.address?.state||''}` },
+    { label: 'Urgência', accessor: (r) => r.urgency || '' },
+    { label: 'Itens', accessor: (r) => (r.items||[]).map(i => `${i.name} x${i.qty||i.quantity||1}`).join('; ') },
+    { label: 'Criado em', accessor: 'createdAt' }
+  ]);
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition', 'attachment; filename="requests.csv"');
   res.send(csv);
 });
 

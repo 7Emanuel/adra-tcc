@@ -79,15 +79,22 @@ export default function AdminDashboard() {
     { status: '', search: '', page: 1, pageSize: 20 },
     isAuthenticated
   );
+  // New: requests fetcher
+  const requests = usePagedFetcher(
+    (p) => adminApi.requests(p),
+    { status: '', search: '', page: 1, pageSize: 20 },
+    isAuthenticated
+  );
 
   const handleExport = async () => {
     const isBenef = tab === 'beneficiaries';
-    const csv = await (isBenef ? adminApi.exportBeneficiaries() : adminApi.exportDonations());
+    const isDon = tab === 'donations';
+    const csv = await (isBenef ? adminApi.exportBeneficiaries() : isDon ? adminApi.exportDonations() : adminApi.exportRequests());
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = isBenef ? 'beneficiarios.csv' : 'doacoes.csv';
+    a.download = isBenef ? 'beneficiarios.csv' : isDon ? 'doacoes.csv' : 'pedidos_ajuda.csv';
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -106,12 +113,13 @@ export default function AdminDashboard() {
   useEffect(() => {
     const be = beneficiaries.error || '';
     const de = donations.error || '';
-    console.log('🔍 Verificando erros:', { beneficiariesError: be, donationsError: de });
-    if (/(Sem sessão|Sessão inválida)/i.test(be + ' ' + de)) {
+    const re = requests.error || '';
+    console.log('🔍 Verificando erros:', { beneficiariesError: be, donationsError: de, requestsError: re });
+    if (/(Sem sessão|Sessão inválida)/i.test(be + ' ' + de + ' ' + re)) {
       console.log('❌ Sessão inválida detectada, redirecionando para home');
       navigate('/');
     }
-  }, [beneficiaries.error, donations.error, navigate]);
+  }, [beneficiaries.error, donations.error, requests.error, navigate]);
 
   // If the admin API is down (proxy/500), show an empty-state message instead of raw error for beneficiaries
   const beneErrorLooksLikeServerDown = /Erro\s*5\d\d|ECONNREFUSED|Failed to fetch|NetworkError|proxy/i.test(
@@ -119,6 +127,9 @@ export default function AdminDashboard() {
   );
   const donaErrorLooksLikeServerDown = /Erro\s*5\d\d|ECONNREFUSED|Failed to fetch|NetworkError|proxy/i.test(
     donations.error || ''
+  );
+  const reqErrorLooksLikeServerDown = /Erro\s*5\d\d|ECONNREFUSED|Failed to fetch|NetworkError|proxy|404/i.test(
+    requests.error || ''
   );
 
   return (
@@ -146,6 +157,8 @@ export default function AdminDashboard() {
               <div className="flex gap-2">
                 <TabButton active={tab==='beneficiaries'} onClick={() => setTab('beneficiaries')}>Validações pendentes</TabButton>
                 <TabButton active={tab==='donations'} onClick={() => setTab('donations')}>Coletas/Entregas</TabButton>
+                {/* New tab */}
+                <TabButton active={tab==='requests'} onClick={() => setTab('requests')}>Pedidos de Ajuda</TabButton>
               </div>
             </div>
           </header>
@@ -154,12 +167,13 @@ export default function AdminDashboard() {
         <div className="flex items-center gap-2 mb-4">
           <input
             className="border rounded-lg px-3 py-2 w-full max-w-sm"
-            placeholder={tab==='beneficiaries' ? 'Buscar beneficiários' : 'Buscar doações'}
-            value={(tab==='beneficiaries'?beneficiaries.params.search:donations.params.search) || ''}
+            placeholder={tab==='beneficiaries' ? 'Buscar beneficiários' : tab==='donations' ? 'Buscar doações' : 'Buscar pedidos'}
+            value={(tab==='beneficiaries'?beneficiaries.params.search: tab==='donations'?donations.params.search: requests.params.search) || ''}
             onChange={(e) => {
               const v = e.target.value;
               if (tab==='beneficiaries') beneficiaries.setParams({ ...beneficiaries.params, search: v, page: 1 });
-              else donations.setParams({ ...donations.params, search: v, page: 1 });
+              else if (tab==='donations') donations.setParams({ ...donations.params, search: v, page: 1 });
+              else requests.setParams({ ...requests.params, search: v, page: 1 });
             }}
           />
           <Button variant="secondary" onClick={handleExport}>Exportar CSV</Button>
@@ -191,7 +205,7 @@ export default function AdminDashboard() {
               </tr>
             )}
           />
-        ) : (
+        ) : tab === 'donations' ? (
           <SectionTable
             loading={donations.loading}
             error={donaErrorLooksLikeServerDown ? '' : donations.error}
@@ -216,6 +230,31 @@ export default function AdminDashboard() {
               </tr>
             )}
           />
+        ) : (
+          // Requests tab
+          <SectionTable
+            loading={requests.loading}
+            error={reqErrorLooksLikeServerDown ? '' : requests.error}
+            data={requests.data}
+            emptyMessage="Ainda não há doadores."
+            onPrev={() => requests.setParams({ ...requests.params, page: Math.max(1, (requests.data.page||1) - 1) })}
+            onNext={() => requests.setParams({ ...requests.params, page: Math.min(requests.data.pages||1, (requests.data.page||1) + 1) })}
+            renderRow={(r) => (
+              <tr key={r.id} className="border-b">
+                <td className="px-3 py-2 text-sm text-gray-700">{r.id}</td>
+                <td className="px-3 py-2 text-sm">{r.contact?.name}</td>
+                <td className="px-3 py-2 text-sm">{r.urgency || '-'}</td>
+                <td className="px-3 py-2 text-sm">{r.status || '-'}</td>
+                <td className="px-3 py-2 text-sm">{(r.address?.cidade||r.address?.city)}/{(r.address?.uf||r.address?.state)}</td>
+                <td className="px-3 py-2 text-sm truncate max-w-xs" title={(r.items||[]).map(i=>`${i.name} x${i.qty||i.quantity||1}`).join('; ')}>
+                  {(r.items||[]).map(i=>i.name).join(', ')}
+                </td>
+                <td className="px-3 py-2 text-sm text-right">
+                  <Button size="sm" variant="secondary" onClick={() => setDetailItem({ type: 'request', data: r })}>Ver</Button>
+                </td>
+              </tr>
+            )}
+          />
         )}
       </main>
 
@@ -234,6 +273,7 @@ export default function AdminDashboard() {
           // Trigger refetch by resetting params
           beneficiaries.setParams({ ...beneficiaries.params });
           donations.setParams({ ...donations.params });
+          requests.setParams({ ...requests.params });
         }}
       />
 
@@ -241,7 +281,7 @@ export default function AdminDashboard() {
       <Modal
         isOpen={!!detailItem}
         onClose={() => setDetailItem(null)}
-        title={detailItem?.type === 'donation' ? 'Detalhes da Doação' : 'Detalhes do Beneficiário'}
+        title={detailItem?.type === 'donation' ? 'Detalhes da Doação' : detailItem?.type === 'beneficiary' ? 'Detalhes do Beneficiário' : 'Pedido de Ajuda'}
         primaryAction={{ label: 'Fechar', onClick: () => setDetailItem(null) }}
       >
         {detailItem && (
@@ -255,13 +295,35 @@ export default function AdminDashboard() {
                 <div><span className="text-gray-600">Endereço: </span><span className="font-medium">{detailItem.data.address?.city}/{detailItem.data.address?.state}</span></div>
                 <div><span className="text-gray-600">Status: </span><span className="font-medium">{detailItem.data.status}</span></div>
               </>
-            ) : (
+            ) : detailItem.type === 'donation' ? (
               <>
                 <div><span className="text-gray-600">Doador: </span><span className="font-medium">{detailItem.data.donor?.name}</span></div>
                 <div><span className="text-gray-600">Tipo: </span><span className="font-medium">{detailItem.data.type}</span></div>
                 <div><span className="text-gray-600">Cidade/UF: </span><span className="font-medium">{detailItem.data.address?.city}/{detailItem.data.address?.state}</span></div>
                 <div><span className="text-gray-600">Itens: </span><span className="font-medium">{(detailItem.data.items||[]).map(i=>`${i.name} x${i.qty}`).join('; ')}</span></div>
                 <div><span className="text-gray-600">Status: </span><span className="font-medium">{detailItem.data.status}</span></div>
+              </>
+            ) : (
+              // request details
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <div><span className="text-gray-600">Nome: </span><span className="font-medium">{detailItem.data.contact?.name}</span></div>
+                  <div><span className="text-gray-600">Email: </span><span className="font-medium">{detailItem.data.contact?.email}</span></div>
+                  <div><span className="text-gray-600">Telefone: </span><span className="font-medium">{detailItem.data.contact?.phone}</span></div>
+                  <div><span className="text-gray-600">Cidade/UF: </span><span className="font-medium">{(detailItem.data.address?.cidade||detailItem.data.address?.city)}/{(detailItem.data.address?.uf||detailItem.data.address?.state)}</span></div>
+                </div>
+                <div><span className="text-gray-600">Urgência: </span><span className="font-medium">{detailItem.data.urgency || '-'}</span></div>
+                <div>
+                  <span className="text-gray-600">Itens: </span>
+                  <ul className="list-disc ml-5">
+                    {(detailItem.data.items||[]).map((i, idx) => (
+                      <li key={idx}>{i.name} — {i.qty||i.quantity||1} {i.unit||'unid.'} {i.category?`(${i.category})`:''}</li>
+                    ))}
+                  </ul>
+                </div>
+                {detailItem.data.description ? (
+                  <div><span className="text-gray-600">Descrição: </span><span className="font-medium whitespace-pre-wrap">{detailItem.data.description}</span></div>
+                ) : null}
               </>
             )}
           </div>

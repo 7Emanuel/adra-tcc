@@ -40,5 +40,13 @@ export const adminApi = {
   },
   exportDonations() {
     return fetch(`${API}/donations/export.csv`, { credentials: 'include' }).then(r => r.text());
+  },
+  // New: requests endpoints
+  requests(params = {}) {
+    const q = new URLSearchParams(params).toString();
+    return fetch(`${API}/requests?${q}`, { credentials: 'include' }).then(json);
+  },
+  exportRequests() {
+    return fetch(`${API}/requests/export.csv`, { credentials: 'include' }).then(r => r.text());
   }
 };
