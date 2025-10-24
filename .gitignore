@@ -24,3 +24,24 @@ dist-ssr
 *.sw?
 
 /src/generated/prisma
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# Prisma artifacts and local DB
+prisma/*.db
+prisma/*.db-journal
+.prisma/
+
+# CI/coverage/cache
+coverage/
+.eslintcache
+
+# Hosting
+.vercel/
+.netlify/
+
+# Local runtime data
+server/data/schedules.json
